@@ -1,11 +1,6 @@
 <div align="center">
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="72" height="72" fill="none">
-  <rect width="24" height="24" rx="6" fill="#1DB954"/>
-  <path d="M9 18V5l12-2v13" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="6" cy="18" r="3" fill="#000"/>
-  <circle cx="18" cy="16" r="3" fill="#000"/>
-</svg>
+<img src="public/favicon.svg" alt="Lyrics Finder AI Logo" width="72" height="72" />
 
 # 🎵 Lyrics Finder AI
 
@@ -132,7 +127,7 @@ This project is for educational and demonstration purposes. Music data is provid
 
 <div align="center">
 
-Made with ❤️ by **Meet Duggar**
+Made by **Meet Duggar**
 
 </div>
 
