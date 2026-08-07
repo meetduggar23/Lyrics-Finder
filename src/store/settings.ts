@@ -10,7 +10,6 @@ interface SettingsState {
   toggleAutoScroll: () => void;
   toggleReadingMode: () => void;
   toggleReduceMotion: () => void;
-  toggleTheme: () => void;
   resetSettings: () => void;
 }
 
@@ -46,14 +45,6 @@ export const useSettingsStore = create<SettingsState>()(
           settings: {
             ...get().settings,
             reduceMotion: !get().settings.reduceMotion,
-          },
-        }),
-
-      toggleTheme: () =>
-        set({
-          settings: {
-            ...get().settings,
-            theme: get().settings.theme === "dark" ? "light" : "dark",
           },
         }),
 

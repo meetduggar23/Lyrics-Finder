@@ -22,7 +22,6 @@ export const STORAGE_KEYS = {
   favorites: "lfai_favorites",
   history: "lfai_history",
   settings: "lfai_settings",
-  theme: "lfai_theme",
 };
 
 // Default settings
@@ -31,7 +30,6 @@ export const DEFAULT_SETTINGS = {
   fontSize: "md" as const,
   autoScroll: true,
   readingMode: false,
-  theme: "dark" as const,
   reduceMotion: false,
   rememberHistory: true,
 };

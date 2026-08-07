@@ -113,7 +113,6 @@ export interface Settings {
   fontSize: "sm" | "md" | "lg" | "xl";
   autoScroll: boolean;
   readingMode: boolean;
-  theme: "dark" | "light";
   reduceMotion: boolean;
   rememberHistory: boolean;
 }

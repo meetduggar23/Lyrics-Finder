@@ -1,7 +1,6 @@
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useSettingsStore } from "@/store/settings";
-import { useTheme } from "@/hooks/useTheme";
-import { Moon, Sun, Type, Music, ScrollText, Move, RotateCcw } from "lucide-react";
+import { Type, Music, ScrollText, Move, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toastSuccess } from "@/store/toast";
 import { cn } from "@/utils/cn";
@@ -58,8 +57,7 @@ function SettingRow({
 
 export function Settings() {
   useDocumentTitle("Settings");
-  useTheme();
-  const { settings, updateSettings, setFontSize, toggleAutoScroll, toggleReadingMode, toggleReduceMotion, toggleTheme, resetSettings } = useSettingsStore();
+  const { settings, updateSettings, setFontSize, toggleAutoScroll, toggleReadingMode, toggleReduceMotion, resetSettings } = useSettingsStore();
 
   const fontSizes: { id: Settings["fontSize"]; label: string }[] = [
     { id: "sm", label: "Small" },
@@ -88,13 +86,6 @@ export function Settings() {
           <h2 className="font-semibold text-foreground">Appearance</h2>
         </div>
         <div className="px-6 py-2">
-          <SettingRow
-            icon={settings.theme === "dark" ? <Moon className="h-5 w-5 text-primary" /> : <Sun className="h-5 w-5 text-primary" />}
-            title="Theme"
-            description="Switch between dark and light mode."
-          >
-            <Toggle checked={settings.theme === "dark"} onChange={toggleTheme} label="Dark mode" />
-          </SettingRow>
           <SettingRow
             icon={<Move className="h-5 w-5 text-primary" />}
             title="Reduce motion"

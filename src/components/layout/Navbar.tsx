@@ -3,9 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, Menu, X, Home, Heart, History, Settings as SettingsIcon, Info, AudioLines } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { Logo } from "@/components/common/Logo";
-import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { useUI } from "@/context/useUI";
-import { useTheme } from "@/hooks/useTheme";
 import { useIsMobile } from "@/hooks/useMediaQuery";
 
 const navItems = [
@@ -21,7 +19,6 @@ export function Navbar() {
   const { openSearch, mobileNavOpen, openMobileNav, closeMobileNav } = useUI();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  useTheme();
 
   const handleNavClick = (path: string) => {
     closeMobileNav();
@@ -69,7 +66,6 @@ export function Navbar() {
               <Search className="h-4 w-4" />
               <span className="hidden sm:inline">Search…</span>
             </button>
-            <ThemeToggle />
             {isMobile && (
               <button
                 onClick={openMobileNav}
