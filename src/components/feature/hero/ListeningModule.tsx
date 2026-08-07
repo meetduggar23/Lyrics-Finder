@@ -194,7 +194,7 @@ export function ListeningModule({
       {/* Status indicator */}
       <div
         className={cn(
-          "flex min-h-9 flex-col items-center gap-2",
+          "flex flex-col items-center gap-2",
           !centered && "lg:items-start",
         )}
       >
