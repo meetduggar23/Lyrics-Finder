@@ -5,6 +5,9 @@ import { PageSkeleton } from "@/components/feature/Loaders";
 
 // Lazy-loaded pages (map named exports to default for React.lazy)
 const Home = lazy(() => import("@/pages/Home").then((m) => ({ default: m.Home })));
+const DetectPage = lazy(() =>
+  import("@/pages/Detect").then((m) => ({ default: m.DetectPage })),
+);
 const SearchResults = lazy(() =>
   import("@/pages/SearchResults").then((m) => ({ default: m.SearchResults })),
 );
@@ -53,7 +56,7 @@ export default function App() {
           path="detect"
           element={
             <Suspense fallback={<PageLoader />}>
-              <Home />
+              <DetectPage />
             </Suspense>
           }
         />

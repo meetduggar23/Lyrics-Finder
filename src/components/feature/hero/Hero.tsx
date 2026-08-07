@@ -1,13 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Mic, TriangleAlert } from "lucide-react";
-import { useRecorder } from "@/hooks/useRecorder";
-import { recognizeAudio, hasAuddKey } from "@/services/audd";
-import { findTrack } from "@/services/deezer";
+import { hasAuddKey } from "@/services/audd";
+import { useSongRecognition } from "@/hooks/useSongRecognition";
 import type { DetectedSong, Song } from "@/types";
 import { HeroBackground } from "./HeroBackground";
-import { ListeningModule, type HeroPhase } from "./ListeningModule";
+import { ListeningModule } from "./ListeningModule";
 import { MusicShowcase } from "./MusicShowcase";
 
 const staggerItem = (delay: number) => ({
@@ -18,75 +17,29 @@ const staggerItem = (delay: number) => ({
 
 export function Hero() {
   const navigate = useNavigate();
-  const [phase, setPhase] = useState<HeroPhase>("idle");
-  const [error, setError] = useState<string | null>(null);
-  const [progress, setProgress] = useState(0);
-  const [detectedSong, setDetectedSong] = useState<DetectedSong | null>(null);
-  const progressRef = useRef(0);
 
-  const runRecognitionRef = useRef<(blob: Blob) => void>(() => {});
-  runRecognitionRef.current = (blob) => {
-    void runRecognition(blob);
-  };
-
-  const { seconds, error: recorderError, start, cancel } = useRecorder(
-    (blob) => runRecognitionRef.current(blob),
-  );
-
-  useEffect(() => {
-    if (recorderError) {
-      setPhase("error");
-      setError(recorderError);
-    }
-  }, [recorderError]);
-
-  const runRecognition = async (blob: Blob) => {
-    setPhase("analyzing");
-    setError(null);
-    progressRef.current = 0;
-    setProgress(0);
-
-    const timer = window.setInterval(() => {
-      progressRef.current = Math.min(90, progressRef.current + Math.random() * 12);
-      setProgress(Math.floor(progressRef.current));
-    }, 250);
-
-    try {
-      const detected = await recognizeAudio(blob, "recording.webm");
-      setDetectedSong(detected);
-      setProgress(100);
-      const song: Song | null = await findTrack(detected.title, detected.artist);
-      window.clearInterval(timer);
-      // Hold briefly so the "Song Detected" reveal is visible
-      await new Promise((r) => setTimeout(r, 1400));
-      if (song) {
-        navigate(`/song/${song.id}`);
+  const onDetected = useCallback(
+    (detected: DetectedSong, track: Song | null) => {
+      if (track) {
+        navigate(`/song/${track.id}`);
       } else {
         navigate(
           `/search?q=${encodeURIComponent(`${detected.title} ${detected.artist}`)}`,
         );
       }
-    } catch (e) {
-      window.clearInterval(timer);
-      setDetectedSong(null);
-      setError(e instanceof Error ? e.message : "Recognition failed. Please try again.");
-      setPhase("error");
-    }
-  };
+    },
+    [navigate],
+  );
 
-  const handleStart = async () => {
-    setDetectedSong(null);
-    setError(null);
-    setPhase("listening");
-    await start();
-  };
-
-  const handleCancel = () => {
-    cancel();
-    setDetectedSong(null);
-    setPhase("idle");
-    setError(null);
-  };
+  const {
+    phase,
+    error,
+    progress,
+    detectedSong,
+    seconds,
+    startListening,
+    cancelListening,
+  } = useSongRecognition(onDetected);
 
   const handleManualSearch = () => {
     const target = document.getElementById("manual-search");
@@ -112,9 +65,7 @@ export function Hero() {
               {...staggerItem(0.05)}
               className="order-2 w-full lg:order-1"
             >
-              <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-xs font-semibold text-primary">
-                🎵 AI Music Recognition
-              </span>
+              <span className="sr-only">AI Music Recognition</span>
               <h1 className="text-4xl font-black leading-[1.06] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
                 Find Any Song
                 <br />
@@ -129,13 +80,13 @@ export function Hero() {
             </motion.div>
 
             <motion.div {...staggerItem(0.15)} className="order-1 w-full lg:order-2">
-              <ListeningModule
-                phase={phase}
-                seconds={seconds}
-                progress={progress}
-                onStart={handleStart}
-                onCancel={handleCancel}
-              />
+            <ListeningModule
+              phase={phase}
+              seconds={seconds}
+              progress={progress}
+              onStart={startListening}
+              onCancel={cancelListening}
+            />
             </motion.div>
 
             {/* Action buttons */}
@@ -144,7 +95,7 @@ export function Hero() {
               className="order-3 mt-2 flex w-full flex-wrap items-center justify-center gap-3 lg:justify-start"
             >
               <button
-                onClick={listening ? handleCancel : handleStart}
+                onClick={listening ? cancelListening : startListening}
                 disabled={analyzing}
                 className="inline-flex h-12 items-center gap-2 rounded-full bg-primary px-7 text-sm font-bold text-black shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/40 active:scale-95 disabled:pointer-events-none disabled:opacity-60"
               >
@@ -206,7 +157,7 @@ export function Hero() {
                   </p>
                   <div className="mt-4 flex justify-center gap-3 lg:justify-start">
                     <button
-                      onClick={handleStart}
+                      onClick={startListening}
                       className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-black hover:bg-primary-hover"
                     >
                       <Mic className="h-4 w-4" />

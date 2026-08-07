@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Mic, Square } from "lucide-react";
 import { cn } from "@/utils/cn";
+import type { RecognitionPhase } from "@/hooks/useSongRecognition";
 
-export type HeroPhase = "idle" | "listening" | "analyzing" | "error";
+export type HeroPhase = RecognitionPhase;
 
 interface ListeningModuleProps {
   phase: HeroPhase;
@@ -10,15 +11,19 @@ interface ListeningModuleProps {
   progress: number;
   onStart: () => void;
   onCancel: () => void;
+  centered?: boolean;
 }
 
 const WAVE_BARS = 32;
 const PULSE_HEIGHTS = [8, 20, 48, 14, 34, 58, 10, 26];
 
-function Waveform({ active }: { active: boolean }) {
+function Waveform({ active, centered }: { active: boolean; centered?: boolean }) {
   return (
     <div
-      className="flex h-14 items-end justify-center gap-1 lg:justify-start"
+      className={cn(
+        "flex h-14 items-end justify-center gap-1",
+        !centered && "lg:justify-start",
+      )}
       aria-hidden="true"
     >
       {Array.from({ length: WAVE_BARS }).map((_, i) => (
@@ -48,12 +53,18 @@ export function ListeningModule({
   progress,
   onStart,
   onCancel,
+  centered = false,
 }: ListeningModuleProps) {
   const listening = phase === "listening";
   const analyzing = phase === "analyzing";
 
   return (
-    <div className="flex flex-col items-center gap-5 lg:items-start">
+    <div
+      className={cn(
+        "flex flex-col gap-5",
+        centered ? "items-center" : "items-center lg:items-start",
+      )}
+    >
       {/* Microphone button with rings and circular waveform */}
       <div className="relative flex h-52 w-52 items-center justify-center sm:h-60 sm:w-60">
         {/* Soft breathing ring */}
@@ -181,37 +192,38 @@ export function ListeningModule({
       </div>
 
       {/* Status indicator */}
-      <div className="flex min-h-9 flex-col items-center gap-2 lg:items-start">
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-card/70 px-4 py-1.5 backdrop-blur">
-          {phase === "idle" && (
-            <>
-              <span className="h-2 w-2 rounded-full bg-white/60" />
-              <span className="text-sm text-secondary-text">Ready to Listen</span>
-            </>
-          )}
-          {listening && (
-            <>
-              <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
-              <span className="text-sm font-medium text-foreground">
-                Listening… {seconds}s
-              </span>
-            </>
-          )}
-          {analyzing && (
-            <>
-              <span className="text-sm leading-none">✨</span>
-              <span className="text-sm font-medium text-foreground">
-                Song Detected
-              </span>
-            </>
-          )}
-          {phase === "error" && (
-            <>
-              <span className="h-2 w-2 rounded-full bg-error" />
-              <span className="text-sm text-secondary-text">Something went wrong</span>
-            </>
-          )}
-        </div>
+      <div
+        className={cn(
+          "flex min-h-9 flex-col items-center gap-2",
+          !centered && "lg:items-start",
+        )}
+      >
+        {phase !== "idle" && (
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-card/70 px-4 py-1.5 backdrop-blur">
+            {listening && (
+              <>
+                <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+                <span className="text-sm font-medium text-foreground">
+                  Listening… {seconds}s
+                </span>
+              </>
+            )}
+            {analyzing && (
+              <>
+                <span className="text-sm leading-none">✨</span>
+                <span className="text-sm font-medium text-foreground">
+                  Song Detected
+                </span>
+              </>
+            )}
+            {phase === "error" && (
+              <>
+                <span className="h-2 w-2 rounded-full bg-error" />
+                <span className="text-sm text-secondary-text">Something went wrong</span>
+              </>
+            )}
+          </div>
+        )}
 
         {/* Recognition progress */}
         {analyzing && (
@@ -225,9 +237,14 @@ export function ListeningModule({
         )}
       </div>
 
-      <Waveform active={listening} />
+      <Waveform active={listening} centered={centered} />
 
-      <p className="max-w-xs text-center text-sm text-secondary-text lg:text-left">
+      <p
+        className={cn(
+          "max-w-xs text-center text-sm text-secondary-text",
+          !centered && "lg:text-left",
+        )}
+      >
         Tap the microphone and let AI identify the music around you.
       </p>
     </div>

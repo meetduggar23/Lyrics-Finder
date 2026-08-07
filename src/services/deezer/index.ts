@@ -183,6 +183,18 @@ export async function getSong(id: string): Promise<Song | null> {
   }
 }
 
+/** Get trending tracks from the Deezer chart */
+export async function getChartTracks(limit = 8): Promise<Song[]> {
+  try {
+    const { data } = await deezerClient.get("/chart/0/tracks", {
+      params: { limit },
+    });
+    return (data?.data ?? []).map(mapTrack);
+  } catch {
+    return [];
+  }
+}
+
 /** Get tracks by an artist */
 export async function getArtistTopTracks(
   artistId: string,

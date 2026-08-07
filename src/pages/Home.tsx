@@ -6,6 +6,9 @@ import { useHistoryStore } from "@/store/history";
 import type { Song } from "@/types";
 import { PLACEHOLDER_IMAGE } from "@/constants";
 import { Hero } from "@/components/feature/hero/Hero";
+import { TrendingSongs } from "@/components/feature/landing/TrendingSongs";
+import { HowItWorks } from "@/components/feature/landing/HowItWorks";
+import { FeaturesSection } from "@/components/feature/landing/FeaturesSection";
 
 export function Home() {
   useDocumentTitle();
@@ -119,6 +122,10 @@ export function Home() {
           )}
         </section>
       </div>
+
+      <TrendingSongs />
+      <HowItWorks />
+      <FeaturesSection />
     </div>
   );
 }
