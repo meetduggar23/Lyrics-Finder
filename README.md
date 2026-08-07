@@ -17,20 +17,20 @@ A modern, feature-rich music lyrics search application built with **React 19**, 
 
 ---
 
-## ✨ Features
+## Features
 
-- 🔍 **Multi-source Search** — Search songs, artists, and albums powered by **Deezer**, **iTunes**, and **Last.fm** APIs
-- 📜 **Smart Lyrics Fetching** — Automatic lyrics lookup with fallback across multiple lyrics APIs
-- 🎧 **Built-in Music Player** — Stream 30-second previews with a full-featured player UI
-- ❤️ **Favorites** — Save songs, artists, and albums to your personal collection
-- 🕘 **Search History** — Automatically tracks your recent searches and views
-- 🎨 **Dark / Light Themes** — Toggle between beautiful dark and light modes
-- ⌨️ **Keyboard Navigation** — Full keyboard shortcuts for power users
-- 📱 **Fully Responsive** — Optimized for mobile, tablet, and desktop
-- ♿ **Accessible** — ARIA-compliant components and semantic HTML
-- ⚡ **Performance Optimized** — Code-splitting, lazy loading, and manual chunking
+- **Multi-source Search** — Search songs, artists, and albums powered by **Deezer**, **iTunes**, and **Last.fm** APIs
+- **Smart Lyrics Fetching** — Automatic lyrics lookup with fallback across multiple lyrics APIs
+- **Built-in Music Player** — Stream 30-second previews with a full-featured player UI
+- **Favorites** — Save songs, artists, and albums to your personal collection
+- **Search History** — Automatically tracks your recent searches and views
+- **Dark / Light Themes** — Toggle between beautiful dark and light modes
+- **Keyboard Navigation** — Full keyboard shortcuts for power users
+- **Fully Responsive** — Optimized for mobile, tablet, and desktop
+- **Accessible** — ARIA-compliant components and semantic HTML
+- **Performance Optimized** — Code-splitting, lazy loading, and manual chunking
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer       | Technology                                                              |
 | ----------- | ----------------------------------------------------------------------- |
@@ -43,7 +43,7 @@ A modern, feature-rich music lyrics search application built with **React 19**, 
 | Animation   | Framer Motion                                                            |
 | Forms       | React Hook Form + Zod                                                    |
 
-## 📦 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -79,7 +79,7 @@ The app will open automatically at `http://localhost:5173`.
 | `npm run lint`    | Run ESLint                                |
 | `npm run format`  | Format code with Prettier                 |
 
-## 🔑 Environment Variables
+## Environment Variables
 
 Create a `.env` file in the root directory (optional — the app works out of the box with public keys):
 
@@ -88,7 +88,7 @@ Create a `.env` file in the root directory (optional — the app works out of th
 VITE_LASTFM_API_KEY=your_lastfm_api_key
 ```
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 src/
@@ -109,7 +109,7 @@ src/
 └── utils/          # Utility functions
 ```
 
-## 🚀 Deployment
+## Deployment
 
 Build the project for production:
 
@@ -119,7 +119,7 @@ npm run build
 
 The output is generated in the `dist/` directory, ready to deploy to any static hosting service like **Vercel**, **Netlify**, **GitHub Pages**, or **Cloudflare Pages**.
 
-## 📄 License
+## License
 
 This project is for educational and demonstration purposes. Music data is provided by public APIs — **Deezer**, **iTunes**, **Last.fm**, and **Lyrics APIs**. All trademarks and artist content belong to their respective owners.
 
