@@ -602,11 +602,10 @@ export function MusicShowcase({
   const [shuffleKey, setShuffleKey] = useState(0);
   const [hoveredSlotKey, setHoveredSlotKey] = useState<string | null>(null);
   const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
-  const isFavorite = useFavoritesStore((s) => s.isFavorite);
 
   const detectedId =
     detected?.songId || (detected ? `detected-${detected.title}` : "");
-  const fav = detected ? isFavorite(detectedId, "song") : false;
+  const fav = useFavoritesStore((s) => s.isFavorite(detectedId, "song"));
 
   const handleFavorite = () => {
     if (!detected) return;

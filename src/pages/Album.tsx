@@ -48,7 +48,11 @@ const { id } = useParams<{ id: string }>();
     setError(null);
 
     const load = async () => {
-      if (!id) return;
+      if (!id) {
+        setError("Album not found.");
+        setLoading(false);
+        return;
+      }
       const data = await getAlbum(id);
       if (cancelled) return;
       if (!data) {

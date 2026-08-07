@@ -53,6 +53,11 @@ export function SongCard({ song, index = 0 }: SongCardProps) {
     );
   };
 
+  // Only Deezer tracks have numeric ids that /song/:id can load.
+  const href = /^\d+$/.test(song.id)
+    ? `/song/${song.id}`
+    : `/search?q=${encodeURIComponent(`${song.title} ${song.artist}`)}`;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -62,7 +67,7 @@ export function SongCard({ song, index = 0 }: SongCardProps) {
       className="group relative"
     >
       <Link
-        to={`/song/${song.id}`}
+        to={href}
         className="block rounded-2xl border border-border bg-card p-3 transition-colors hover:border-primary/40"
       >
         <div className="relative mb-3 overflow-hidden rounded-xl">

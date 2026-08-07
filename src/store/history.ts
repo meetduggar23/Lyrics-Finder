@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { HistoryItem } from "@/types";
 import { STORAGE_KEYS } from "@/constants";
+import { useSettingsStore } from "@/store/settings";
 
 interface HistoryState {
   items: HistoryItem[];
@@ -18,6 +19,7 @@ export const useHistoryStore = create<HistoryState>()(
       items: [],
 
       addItem: (item) => {
+        if (!useSettingsStore.getState().settings.rememberHistory) return;
         const id = item.id;
         // Remove existing item with same id to move to top
         const filtered = get().items.filter((i) => i.id !== id);

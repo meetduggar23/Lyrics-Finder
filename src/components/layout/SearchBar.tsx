@@ -24,7 +24,7 @@ export function SearchBar() {
     .slice(0, 5);
 
   const selectSuggestion = (title: string, artist?: string) => {
-    addHistory({ id: `search-${title}-${Date.now()}`, type: "search", title });
+    addHistory({ id: `search-${title}`, type: "search", title });
     closeSearch();
     navigate(`/search?q=${encodeURIComponent(`${title}${artist ? ` ${artist}` : ""}`)}`);
     clearSearch();
@@ -33,7 +33,7 @@ export function SearchBar() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
-    addHistory({ id: `search-${query}-${Date.now()}`, type: "search", title: query });
+    addHistory({ id: `search-${query}`, type: "search", title: query });
     closeSearch();
     navigate(`/search?q=${encodeURIComponent(query)}`);
     clearSearch();
@@ -120,7 +120,7 @@ export function SearchBar() {
                 <button
                   key={r.id}
                   onClick={() => {
-                    addHistory({ ...r, id: `search-${Date.now()}` });
+                    addHistory(r);
                     closeSearch();
                     navigate(`/search?q=${encodeURIComponent(r.title)}`);
                   }}

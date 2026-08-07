@@ -56,11 +56,14 @@ export function estimateReadingTime(lyrics: string): number {
 
 /**
  * Clean up common formatting artifacts from lyrics APIs.
+ * Strips LRC timestamps ([00:27.93]) and LRC metadata tags ([ti:...]).
  */
 export function cleanLyrics(lyrics: string): string {
   if (!lyrics) return "";
   return lyrics
     .replace(/\r/g, "")
+    .replace(/\[(?:ti|ar|al|by|offset|length|re|ve):[^\]]*\]/gi, "")
+    .replace(/\[\d{1,2}:\d{2}(?:[.:]\d{1,3})?\]/g, "")
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();

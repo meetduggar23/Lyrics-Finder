@@ -19,8 +19,10 @@ export function useRecorder(onComplete?: (blob: Blob) => void) {
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<number | null>(null);
   const cancelledRef = useRef(false);
+  const startingRef = useRef(false);
 
   const cleanupStream = useCallback(() => {
+    startingRef.current = false;
     if (timerRef.current !== null) {
       window.clearInterval(timerRef.current);
       timerRef.current = null;
@@ -41,6 +43,8 @@ export function useRecorder(onComplete?: (blob: Blob) => void) {
   }, [cleanupStream]);
 
   const start = useCallback(async () => {
+    if (startingRef.current) return;
+    startingRef.current = true;
     setError(null);
     setBlob(null);
     chunksRef.current = [];
@@ -56,17 +60,34 @@ export function useRecorder(onComplete?: (blob: Blob) => void) {
         },
       });
     } catch {
+      startingRef.current = false;
       setError("Microphone access denied. Allow mic permission and try again.");
       return;
     }
 
-    const mimeType = ["audio/webm", "audio/ogg", "audio/mp4"].find((t) =>
-      MediaRecorder.isTypeSupported(t),
-    );
-    const recorder = new MediaRecorder(
-      stream,
-      mimeType ? { mimeType } : undefined,
-    );
+    // Cancelled or unmounted while the permission prompt was pending
+    if (cancelledRef.current) {
+      startingRef.current = false;
+      stream.getTracks().forEach((t) => t.stop());
+      return;
+    }
+
+    let recorder: MediaRecorder;
+    try {
+      const mimeType = ["audio/webm", "audio/ogg", "audio/mp4"].find((t) =>
+        MediaRecorder.isTypeSupported(t),
+      );
+      recorder = new MediaRecorder(
+        stream,
+        mimeType ? { mimeType } : undefined,
+      );
+    } catch {
+      startingRef.current = false;
+      stream.getTracks().forEach((t) => t.stop());
+      setError("Recording is not supported in this browser.");
+      return;
+    }
+
     recorder.ondataavailable = (e) => {
       if (e.data.size > 0) chunksRef.current.push(e.data);
     };

@@ -29,6 +29,11 @@ export function AlbumCard({ album, index = 0 }: AlbumCardProps) {
     );
   };
 
+  // Only Deezer albums have numeric ids that /album/:id can load.
+  const href = /^\d+$/.test(album.id)
+    ? `/album/${album.id}`
+    : `/search?q=${encodeURIComponent(`${album.title} ${album.artist}`)}`;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -38,7 +43,7 @@ export function AlbumCard({ album, index = 0 }: AlbumCardProps) {
       className="group relative"
     >
       <Link
-        to={`/album/${album.id}`}
+        to={href}
         className="block rounded-2xl border border-border bg-card p-3 transition-colors hover:border-primary/40"
       >
         <div className="relative mb-3 overflow-hidden rounded-xl">

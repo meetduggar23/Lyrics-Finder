@@ -1,5 +1,6 @@
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useSettingsStore } from "@/store/settings";
+import { useHistoryStore } from "@/store/history";
 import { Type, Music, ScrollText, Move, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toastSuccess } from "@/store/toast";
@@ -58,6 +59,7 @@ function SettingRow({
 export function Settings() {
   useDocumentTitle("Settings");
   const { settings, updateSettings, setFontSize, toggleAutoScroll, toggleReadingMode, toggleReduceMotion, resetSettings } = useSettingsStore();
+  const clearHistory = useHistoryStore((s) => s.clearHistory);
 
   const fontSizes: { id: Settings["fontSize"]; label: string }[] = [
     { id: "sm", label: "Small" },
@@ -175,7 +177,11 @@ export function Settings() {
           >
             <Toggle
               checked={settings.rememberHistory}
-              onChange={() => updateSettings({ rememberHistory: !settings.rememberHistory })}
+              onChange={() => {
+                const next = !settings.rememberHistory;
+                updateSettings({ rememberHistory: next });
+                if (!next) clearHistory();
+              }}
               label="Remember history"
             />
           </SettingRow>

@@ -22,7 +22,7 @@ import { cn } from "@/utils/cn";
 
 export function ArtistPage() {
   const { name } = useParams<{ name: string }>();
-  const decodedName = decodeURIComponent(name || "");
+  const decodedName = name || "";
   const [artist, setArtist] = useState<ArtistType | null>(null);
   const [similar, setSimilar] = useState<ArtistType[]>([]);
   const [tracks, setTracks] = useState<Song[]>([]);
@@ -42,7 +42,11 @@ const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
     setError(null);
 
     const load = async () => {
-      if (!decodedName) return;
+      if (!decodedName) {
+        setError("Artist not found.");
+        setLoading(false);
+        return;
+      }
       try {
         const [info, similarArtists] = await Promise.allSettled([
           getArtistInfo(decodedName),

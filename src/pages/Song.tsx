@@ -41,7 +41,11 @@ export function SongPage() {
     setError(null);
 
     const load = async () => {
-      if (!id) return;
+      if (!id) {
+        setError("Song not found.");
+        setLoading(false);
+        return;
+      }
       const data = await getSong(id);
       if (cancelled) return;
       if (!data) {
@@ -186,9 +190,13 @@ export function SongPage() {
           {song.album && (
             <p className="mt-1 text-sm text-muted">
               Album:{" "}
-              <Link to={`/album/${song.albumId || ""}`} className="hover:text-primary hover:underline">
-                {song.album}
-              </Link>
+              {song.albumId && /^\d+$/.test(song.albumId) ? (
+                <Link to={`/album/${song.albumId}`} className="hover:text-primary hover:underline">
+                  {song.album}
+                </Link>
+              ) : (
+                <span>{song.album}</span>
+              )}
             </p>
           )}
           <div className="mt-4 flex flex-wrap items-center gap-3">

@@ -74,13 +74,9 @@ export async function getLyrics(
   params: LyricsRequest,
   source: LyricsSource = "auto",
 ): Promise<Lyrics> {
-  // Try selected/all sources
+  // Try the selected source first, then fall back to the other one.
   const attempts: LyricsSource[] =
-    source === "auto"
-      ? ["lrclib", "ovh"]
-      : source === "lrclib"
-        ? ["lrclib"]
-        : ["ovh"];
+    source === "ovh" ? ["ovh", "lrclib"] : ["lrclib", "ovh"];
 
   for (const src of attempts) {
     const result =

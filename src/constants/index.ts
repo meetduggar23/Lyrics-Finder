@@ -5,12 +5,12 @@ export const APP_TAGLINE =
   "Discover Lyrics. Explore Artists. Feel the Music.";
 export const APP_VERSION = "1.0.0";
 
-// API endpoints
+// API endpoints (raw upstream bases — proxying is handled in @/api/client)
 export const API = {
-  deezer: "https://corsproxy.io/?url=https://api.deezer.com",
-  ovh: "https://corsproxy.io/?url=https://api.lyrics.ovh/v1",
-  lrcLib: "https://corsproxy.io/?url=https://lrclib.net/api",
-  itunes: "https://corsproxy.io/?url=https://itunes.apple.com",
+  deezer: "https://api.deezer.com",
+  ovh: "https://api.lyrics.ovh/v1",
+  lrcLib: "https://lrclib.net/api",
+  itunes: "https://itunes.apple.com",
   lastfm: "https://ws.audioscrobbler.com/2.0",
 };
 

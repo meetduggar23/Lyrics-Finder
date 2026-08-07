@@ -22,7 +22,6 @@ export function DetectPage() {
   const navigate = useNavigate();
   const [result, setResult] = useState<DetectionResult | null>(null);
   const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
-  const isFavorite = useFavoritesStore((s) => s.isFavorite);
 
   const onDetected = useCallback((detected: DetectedSong, track: Song | null) => {
     setResult({ detected, track });
@@ -69,7 +68,9 @@ export function DetectPage() {
       result.detected.songId ||
       `detected-${result.detected.title}`
     : "";
-  const isResultFavorite = result ? isFavorite(resultId, "song") : false;
+  const isResultFavorite = useFavoritesStore((s) =>
+    s.isFavorite(resultId, "song"),
+  );
 
   const handleListenAgain = () => {
     setResult(null);

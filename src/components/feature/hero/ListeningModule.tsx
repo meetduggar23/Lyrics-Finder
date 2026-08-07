@@ -149,6 +149,7 @@ export function ListeningModule({
 
         <motion.button
           onClick={listening ? onCancel : onStart}
+          disabled={analyzing}
           aria-label={listening ? "Stop listening" : "Start listening"}
           whileHover={{ scale: 1.06 }}
           whileTap={{ scale: 0.94 }}
@@ -163,6 +164,7 @@ export function ListeningModule({
             listening
               ? "bg-primary shadow-[0_0_70px_rgba(29,185,84,0.55)]"
               : "bg-primary shadow-[0_0_30px_rgba(29,185,84,0.25)] hover:shadow-[0_0_55px_rgba(29,185,84,0.45)]",
+            analyzing && "cursor-not-allowed opacity-60",
           )}
         >
           <AnimatePresence mode="wait">

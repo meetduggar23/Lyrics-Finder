@@ -122,6 +122,15 @@ export async function searchAll(query: string): Promise<SearchResults> {
     deezerClient.get("/search/album", { params: { q: query, limit: 6 } }),
   ]);
 
+  // If every Deezer call failed, let callers fall back to another provider.
+  if (
+    songRes.status === "rejected" &&
+    artistRes.status === "rejected" &&
+    albumRes.status === "rejected"
+  ) {
+    throw new Error("Music provider unavailable");
+  }
+
   const songs =
     songRes.status === "fulfilled"
       ? songRes.value.data?.data?.map(mapTrack) ?? []
