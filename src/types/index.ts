@@ -1,0 +1,116 @@
+// Core domain types for the Lyrics Finder AI application
+
+export interface Song {
+  id: string;
+  title: string;
+  artist: string;
+  artistId?: string;
+  album?: string;
+  albumId?: string;
+  cover?: string;
+  coverSmall?: string;
+  coverMedium?: string;
+  coverLarge?: string;
+  duration?: number;
+  previewUrl?: string;
+  link?: string;
+  releaseYear?: number;
+  source?: "deezer" | "itunes" | "lastfm" | "local";
+}
+
+export interface Artist {
+  id: string;
+  name: string;
+  image?: string;
+  imageSmall?: string;
+  imageMedium?: string;
+  imageLarge?: string;
+  genres?: string[];
+  country?: string;
+  biography?: string;
+  listeners?: number;
+  playcount?: number;
+  source?: "deezer" | "itunes" | "lastfm" | "local";
+}
+
+export interface Album {
+  id: string;
+  title: string;
+  artist: string;
+  artistId?: string;
+  cover?: string;
+  coverSmall?: string;
+  coverMedium?: string;
+  coverLarge?: string;
+  releaseDate?: string;
+  genre?: string;
+  label?: string;
+  trackCount?: number;
+  duration?: number;
+  tracks?: Track[];
+  source?: "deezer" | "itunes" | "lastfm" | "local";
+}
+
+export interface Track {
+  id: string;
+  title: string;
+  artist: string;
+  duration?: number;
+  trackNumber?: number;
+  previewUrl?: string;
+}
+
+export interface Lyrics {
+  lyrics: string;
+  source: "ovh" | "lrclib" | "none";
+  synced?: boolean;
+}
+
+export interface SearchResults {
+  songs: Song[];
+  artists: Artist[];
+  albums: Album[];
+  totalResults: number;
+}
+
+export interface SearchSuggestions {
+  suggestions: string[];
+}
+
+export interface FavoriteItem {
+  id: string;
+  type: "song" | "artist" | "album";
+  title: string;
+  subtitle?: string;
+  image?: string;
+  addedAt: number;
+  data?: Song | Artist | Album;
+}
+
+export interface HistoryItem {
+  id: string;
+  type: "search" | "song" | "artist" | "album" | "lyrics";
+  title: string;
+  subtitle?: string;
+  image?: string;
+  viewedAt: number;
+  data?: unknown;
+}
+
+export interface PlayerState {
+  title: string;
+  artist: string;
+  cover: string;
+  previewUrl: string;
+  duration: number;
+}
+
+export interface Settings {
+  defaultLyricsSource: "auto" | "ovh" | "lrclib";
+  fontSize: "sm" | "md" | "lg" | "xl";
+  autoScroll: boolean;
+  readingMode: boolean;
+  theme: "dark" | "light";
+  reduceMotion: boolean;
+  rememberHistory: boolean;
+}
