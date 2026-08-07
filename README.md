@@ -2,7 +2,7 @@
 
 <img src="public/favicon.svg" alt="Lyrics Finder AI Logo" width="72" height="72" />
 
-# 🎵 Lyrics Finder AI
+# Lyrics Finder AI
 
 **Discover Lyrics. Explore Artists. Feel the Music.**
 
