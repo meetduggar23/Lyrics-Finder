@@ -364,7 +364,7 @@ function PlayingCard({
   return (
     <motion.div
       ref={ref}
-      className="absolute left-1/2 top-1/2 will-change-transform"
+      className="absolute left-1/2 top-1/2 will-change-transform lg:top-[26%]"
       style={{ zIndex: hovered ? 90 : slot.z, perspective: 900 }}
       initial={{ x: 0, y: 0, rotate: 0, scale: 0.55, z: 0, opacity: 1, filter: "blur(0px)" }}
       animate={{
@@ -461,7 +461,7 @@ function AmbientLayer() {
     <>
       {/* Soft blurred gradients */}
       <div
-        className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(29,185,84,0.08),transparent_62%)]"
+        className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(29,185,84,0.08),transparent_62%)] lg:-translate-y-24"
         aria-hidden="true"
       />
       <motion.div
@@ -479,7 +479,7 @@ function AmbientLayer() {
 
       {/* Glowing connection lines */}
       <svg
-        className="pointer-events-none absolute inset-0 h-full w-full"
+        className="pointer-events-none absolute inset-0 h-full w-full lg:-translate-y-24"
         viewBox="0 0 600 600"
         fill="none"
         preserveAspectRatio="none"
