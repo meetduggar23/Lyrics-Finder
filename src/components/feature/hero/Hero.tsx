@@ -5,7 +5,7 @@ import { Mic, TriangleAlert } from "lucide-react";
 import { useRecorder } from "@/hooks/useRecorder";
 import { recognizeAudio, hasAuddKey } from "@/services/audd";
 import { findTrack } from "@/services/deezer";
-import type { Song } from "@/types";
+import type { DetectedSong, Song } from "@/types";
 import { HeroBackground } from "./HeroBackground";
 import { ListeningModule, type HeroPhase } from "./ListeningModule";
 import { MusicShowcase } from "./MusicShowcase";
@@ -21,6 +21,7 @@ export function Hero() {
   const [phase, setPhase] = useState<HeroPhase>("idle");
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
+  const [detectedSong, setDetectedSong] = useState<DetectedSong | null>(null);
   const progressRef = useRef(0);
 
   const runRecognitionRef = useRef<(blob: Blob) => void>(() => {});
@@ -52,8 +53,12 @@ export function Hero() {
 
     try {
       const detected = await recognizeAudio(blob, "recording.webm");
+      setDetectedSong(detected);
+      setProgress(100);
       const song: Song | null = await findTrack(detected.title, detected.artist);
       window.clearInterval(timer);
+      // Hold briefly so the "Song Detected" reveal is visible
+      await new Promise((r) => setTimeout(r, 1400));
       if (song) {
         navigate(`/song/${song.id}`);
       } else {
@@ -63,12 +68,14 @@ export function Hero() {
       }
     } catch (e) {
       window.clearInterval(timer);
+      setDetectedSong(null);
       setError(e instanceof Error ? e.message : "Recognition failed. Please try again.");
       setPhase("error");
     }
   };
 
   const handleStart = async () => {
+    setDetectedSong(null);
     setError(null);
     setPhase("listening");
     await start();
@@ -76,6 +83,7 @@ export function Hero() {
 
   const handleCancel = () => {
     cancel();
+    setDetectedSong(null);
     setPhase("idle");
     setError(null);
   };
@@ -238,7 +246,19 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="lg:col-start-2"
           >
-            <MusicShowcase />
+            <MusicShowcase
+              listening={listening}
+              analyzing={analyzing}
+              detected={detectedSong}
+              onLyrics={() =>
+                detectedSong &&
+                navigate(
+                  `/search?q=${encodeURIComponent(
+                    `${detectedSong.title} ${detectedSong.artist}`,
+                  )}`,
+                )
+              }
+            />
           </motion.div>
         </div>
       </div>
