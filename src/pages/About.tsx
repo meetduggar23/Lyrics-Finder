@@ -1,17 +1,17 @@
 import { useNavigate } from "react-router-dom";
-import { Sparkles, Music, Database, Heart, Shield, Zap } from "lucide-react";
+import { Sparkles, Music, Mic, Heart, Shield, Zap } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { Logo } from "@/components/common/Logo";
 import { Button } from "@/components/ui/button";
 import { APP_NAME, APP_VERSION } from "@/constants";
 
 const features = [
+  { icon: Mic, title: "Song Recognition", desc: "Tap to listen — identify the song playing near you in seconds." },
   { icon: Music, title: "Lyrics", desc: "Instant lyrics from multiple providers with automatic fallback." },
-  { icon: Database, title: "Multi-Source Data", desc: "Pulls music metadata from Deezer, iTunes, and Last.fm." },
+  { icon: Sparkles, title: "Smart Search", desc: "Find any song or artist with instant, debounced suggestions." },
   { icon: Heart, title: "Favorites", desc: "Save songs, artists, and albums for quick access." },
   { icon: Shield, title: "Privacy-First", desc: "All data is stored locally in your browser. No tracking." },
   { icon: Zap, title: "Fast & Responsive", desc: "Optimized for speed with lazy-loaded pages and React Query." },
-  { icon: Sparkles, title: "AI-Powered Discovery", desc: "Smart search and trending recommendations." },
 ];
 
 export function About() {
@@ -29,8 +29,9 @@ export function About() {
           About <span className="text-gradient-green">{APP_NAME}</span>
         </h1>
         <p className="mx-auto max-w-2xl text-secondary-text sm:text-lg">
-          {APP_NAME} is a modern music discovery app that helps you find lyrics,
-          explore artists, and feel the music — all in one beautiful interface.
+          {APP_NAME} is a modern lyrics finder that identifies songs from your
+          microphone and gives you instant lyrics, artist info, and album
+          details — in a beautiful, Shazam-inspired interface.
         </p>
         <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted">
           <span>Version {APP_VERSION}</span>
@@ -57,12 +58,12 @@ export function About() {
 
       {/* CTA */}
       <div className="mt-12 rounded-3xl border border-border bg-gradient-to-br from-primary/20 via-card to-card p-8 text-center sm:p-12">
-        <h2 className="mb-2 text-2xl font-bold text-foreground">Ready to dive in?</h2>
+        <h2 className="mb-2 text-2xl font-bold text-foreground">Ready to find a song?</h2>
         <p className="mb-6 text-secondary-text">
-          Start exploring millions of songs and their lyrics right now.
+          Tap the button, play any song, and get its lyrics instantly.
         </p>
         <div className="flex flex-wrap justify-center gap-3">
-          <Button onClick={() => navigate("/discover")}>Explore Music</Button>
+          <Button onClick={() => navigate("/")}>Start Listening</Button>
           <Button variant="outline" onClick={() => navigate("/search?q=pop")}>
             Try a Search
           </Button>

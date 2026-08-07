@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, X, TrendingUp, Clock } from "lucide-react";
-import { useUI } from "@/context/UIContext";
+import { useUI } from "@/context/useUI";
 import { useLiveSearch } from "@/hooks/useSearch";
 import { useKeyboardNavigation } from "@/hooks/useKeyboardNavigation";
 import { useHistoryStore } from "@/store/history";

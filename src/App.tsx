@@ -15,9 +15,6 @@ const ArtistPage = lazy(() =>
 const AlbumPage = lazy(() =>
   import("@/pages/Album").then((m) => ({ default: m.AlbumPage })),
 );
-const Discover = lazy(() =>
-  import("@/pages/Discover").then((m) => ({ default: m.Discover })),
-);
 const Favorites = lazy(() =>
   import("@/pages/Favorites").then((m) => ({ default: m.Favorites })),
 );
@@ -53,6 +50,14 @@ export default function App() {
           }
         />
         <Route
+          path="detect"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <Home />
+            </Suspense>
+          }
+        />
+        <Route
           path="search"
           element={
             <Suspense fallback={<PageLoader />}>
@@ -81,14 +86,6 @@ export default function App() {
           element={
             <Suspense fallback={<PageLoader />}>
               <AlbumPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path="discover"
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <Discover />
             </Suspense>
           }
         />

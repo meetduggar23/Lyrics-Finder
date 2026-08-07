@@ -9,12 +9,12 @@ import { PLACEHOLDER_IMAGE } from "@/constants";
 import { formatDuration, formatDate } from "@/utils/format";
 import { useFavoritesStore, albumToFavorite } from "@/store/favorites";
 import { useHistoryStore } from "@/store/history";
-import { usePlayerStore } from "@/store/player";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ErrorState } from "@/components/ui/error-state";
 import { toastSuccess } from "@/store/toast";
 import { cn } from "@/utils/cn";
+import { playPreview, stopPreview, subscribePreview, getPreviewingUrl } from "@/utils/audio";
 
 export function AlbumPage() {
 const { id } = useParams<{ id: string }>();
@@ -27,10 +27,20 @@ const { id } = useParams<{ id: string }>();
   );
   const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
   const addHistory = useHistoryStore((s) => s.addItem);
-  const playSong = usePlayerStore((s) => s.playSong);
-  const current = usePlayerStore((s) => s.current);
-  const isPlaying = usePlayerStore((s) => s.isPlaying);
-  const togglePlay = usePlayerStore((s) => s.togglePlay);
+  const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = subscribePreview(() => {
+      const url = getPreviewingUrl();
+      const matching = album?.tracks?.find(
+        (t) =>
+          t.previewUrl &&
+          url === new URL(t.previewUrl, window.location.href).href,
+      );
+      setPlayingTrackId(matching ? matching.id : null);
+    });
+    return unsubscribe;
+  }, [album?.tracks]);
 
   useEffect(() => {
     let cancelled = false;
@@ -66,14 +76,12 @@ const { id } = useParams<{ id: string }>();
 
   useDocumentTitle(album ? `${album.title} — ${album.artist}` : "Album");
 
-const handleTrackPlay = (track: Track, _index: number) => {
-    playSong({
-      title: track.title,
-      artist: album?.artist || "",
-      cover: album?.cover || PLACEHOLDER_IMAGE,
-      previewUrl: track.previewUrl || "",
-      duration: track.duration || 30,
-    });
+const handleTrackPlay = (track: Track) => {
+    if (playingTrackId === track.id) {
+      stopPreview();
+    } else if (track.previewUrl) {
+      playPreview(track.previewUrl);
+    }
   };
 
   const handleFavorite = () => {
@@ -165,9 +173,7 @@ const handleTrackPlay = (track: Track, _index: number) => {
           className="overflow-hidden rounded-2xl border border-border bg-card/50"
         >
           {album.tracks.map((track, i) => {
-            const isCurrentTrack =
-              current?.title === track.title && current?.artist === album.artist;
-            const isPlayingThis = isCurrentTrack && isPlaying;
+            const isPlayingThis = playingTrackId === track.id;
             return (
               <div
                 key={track.id}
@@ -176,11 +182,7 @@ const handleTrackPlay = (track: Track, _index: number) => {
                 )}
               >
                 <button
-                  onClick={() =>
-                    isCurrentTrack
-                      ? togglePlay()
-                      : handleTrackPlay(track, i)
-                  }
+                  onClick={() => handleTrackPlay(track)}
                   disabled={!track.previewUrl}
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-secondary-text transition-colors hover:bg-primary/10 hover:text-primary disabled:opacity-30"
                   aria-label={isPlayingThis ? "Pause" : "Play"}
@@ -195,7 +197,7 @@ const handleTrackPlay = (track: Track, _index: number) => {
                   {track.trackNumber || i + 1}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className={cn("truncate text-sm font-medium", isCurrentTrack ? "text-primary" : "text-foreground")}>
+                  <p className={cn("truncate text-sm font-medium", isPlayingThis ? "text-primary" : "text-foreground")}>
                     {track.title}
                   </p>
                 </div>

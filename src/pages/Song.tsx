@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Play, Pause, Heart, Clock, Music2, Share2 } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
@@ -9,7 +9,6 @@ import type { Song as SongType, Lyrics } from "@/types";
 import { PLACEHOLDER_IMAGE } from "@/constants";
 import { formatDuration } from "@/utils/format";
 import { useFavoritesStore, songToFavorite } from "@/store/favorites";
-import { usePlayerStore } from "@/store/player";
 import { useHistoryStore } from "@/store/history";
 import { useSettingsStore } from "@/store/settings";
 import { LyricsViewer } from "@/components/feature/LyricsViewer";
@@ -18,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { ErrorState } from "@/components/ui/error-state";
 import { toastSuccess } from "@/store/toast";
 import { cn } from "@/utils/cn";
+import { playPreview, stopPreview, subscribePreview, getPreviewingUrl } from "@/utils/audio";
 
 export function SongPage() {
   const { id } = useParams<{ id: string }>();
@@ -33,7 +33,7 @@ export function SongPage() {
   const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
   const addHistory = useHistoryStore((s) => s.addItem);
   const defaultSource = useSettingsStore((s) => s.settings.defaultLyricsSource);
-  const clearSettings = useSettingsStore((s) => s.updateSettings);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let cancelled = false;
@@ -79,26 +79,24 @@ export function SongPage() {
 
   useDocumentTitle(song ? `${song.title} — ${song.artist}` : "Song");
 
-  const playSong = usePlayerStore((s) => s.playSong);
-  const current = usePlayerStore((s) => s.current);
-  const isPlaying = usePlayerStore((s) => s.isPlaying);
-  const togglePlay = usePlayerStore((s) => s.togglePlay);
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  const isCurrent =
-    current?.title === song?.title && current?.artist === song?.artist;
+  useEffect(() => {
+    if (!song?.previewUrl) return;
+    const unsubscribe = subscribePreview(() => {
+      setIsPlaying(
+        getPreviewingUrl() === new URL(song.previewUrl!, window.location.href).href,
+      );
+    });
+    return unsubscribe;
+  }, [song?.previewUrl]);
 
   const handlePlay = () => {
-    if (!song) return;
-    if (isCurrent) {
-      togglePlay();
+    if (!song?.previewUrl) return;
+    if (isPlaying) {
+      stopPreview();
     } else {
-      playSong({
-        title: song.title,
-        artist: song.artist,
-        cover: song.cover || PLACEHOLDER_IMAGE,
-        previewUrl: song.previewUrl || "",
-        duration: song.duration || 30,
-      });
+      playPreview(song.previewUrl);
     }
   };
 
@@ -195,12 +193,12 @@ export function SongPage() {
           )}
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <Button onClick={handlePlay} disabled={!song.previewUrl} className="h-12 px-6">
-              {isCurrent && isPlaying ? (
+              {isPlaying ? (
                 <Pause className="h-5 w-5" />
               ) : (
                 <Play className="h-5 w-5" />
               )}
-              {isCurrent && isPlaying ? "Pause" : "Play Preview"}
+              {isPlaying ? "Pause" : "Play Preview"}
             </Button>
             <Button variant="outline" size="icon" onClick={handleFavorite} aria-label="Favorite">
               <Heart className={cn("h-5 w-5", isFavorite && "fill-current text-primary")} />
@@ -231,7 +229,7 @@ export function SongPage() {
         <Music2 className="h-4 w-4" />
         Lyrics provided by Lyrics.ovh & LRC Lib. Change default source in{" "}
         <button
-          onClick={() => clearSettings({ defaultLyricsSource: "auto" })}
+          onClick={() => navigate("/settings")}
           className="text-primary hover:underline"
         >
           Settings

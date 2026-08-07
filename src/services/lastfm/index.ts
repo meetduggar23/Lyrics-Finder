@@ -147,7 +147,12 @@ export async function getArtistTopAlbums(
       },
     });
     const albums = data?.topalbums?.album as
-      | { name: string; mbid?: string; artist: { name: string }; image?: any[] }[]
+      | {
+          name: string;
+          mbid?: string;
+          artist: { name: string };
+          image?: { "#text": string; size: string }[];
+        }[]
       | undefined;
     return (albums ?? []).map((a) => ({
       id: a.mbid || `lf-${a.name.toLowerCase().replace(/\s+/g, "-")}`,
@@ -156,53 +161,6 @@ export async function getArtistTopAlbums(
       cover: getImage(a.image).medium,
       coverMedium: getImage(a.image).medium,
       coverLarge: getImage(a.image).large,
-      source: "lastfm",
-    }));
-  } catch {
-    return [];
-  }
-}
-
-/** Get trending artists globally */
-export async function getTrendingArtists(limit = 10): Promise<Artist[]> {
-  try {
-    const { data } = await lastfmClient.get("/", {
-      params: {
-        method: "chart.gettopartists",
-        limit,
-      },
-    });
-    const artists = data?.artists?.artist as LastFmArtist[] | undefined;
-    return (artists ?? []).map((a) => ({
-      id: a.mbid || `lf-${a.name.toLowerCase().replace(/\s+/g, "-")}`,
-      name: a.name,
-      image: getImage(a.image).medium,
-      imageMedium: getImage(a.image).medium,
-      listeners: a.listeners ? Number(a.listeners) : undefined,
-      playcount: a.playcount ? Number(a.playcount) : undefined,
-      source: "lastfm",
-    }));
-  } catch {
-    return [];
-  }
-}
-
-/** Get trending tracks globally */
-export async function getTrendingTracks(limit = 15): Promise<Song[]> {
-  try {
-    const { data } = await lastfmClient.get("/", {
-      params: {
-        method: "chart.gettoptracks",
-        limit,
-      },
-    });
-    const tracks = data?.tracks?.track as
-      | { name: string; mbid?: string; artist: { name: string }; listeners?: string }[]
-      | undefined;
-    return (tracks ?? []).map((t) => ({
-      id: t.mbid || `lf-${t.name.toLowerCase().replace(/\s+/g, "-")}`,
-      title: t.name,
-      artist: t.artist?.name,
       source: "lastfm",
     }));
   } catch {

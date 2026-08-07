@@ -1,5 +1,5 @@
 import { deezerClient } from "@/api/client";
-import type { Song, Artist, Album, SearchResults } from "@/types";
+import type { Song, Artist, Album, Track, SearchResults } from "@/types";
 
 /**
  * Deezer API service for music metadata.
@@ -45,6 +45,21 @@ interface DeezerArtist {
   picture_medium?: string;
   picture_big?: string;
   nb_fan?: number;
+}
+
+interface DeezerTrackItem {
+  id: number;
+  title: string;
+  duration: number;
+  preview?: string;
+  track_position?: number;
+}
+
+interface DeezerAlbumDetail extends DeezerAlbum {
+  genre_id?: number;
+  label?: string;
+  genres?: { data: { name: string }[] };
+  tracks?: { data: DeezerTrackItem[] };
 }
 
 function mapTrack(t: DeezerTrack): Song {
@@ -211,7 +226,7 @@ export async function getArtist(id: string): Promise<Artist | null> {
 /** Get a single album by ID */
 export async function getAlbum(id: string): Promise<Album | null> {
   try {
-    const { data } = await deezerClient.get<any>(`/album/${id}`);
+    const { data } = await deezerClient.get<DeezerAlbumDetail>(`/album/${id}`);
     return {
       id: String(data.id),
       title: data.title,
@@ -227,12 +242,12 @@ export async function getAlbum(id: string): Promise<Album | null> {
       trackCount: data.nb_tracks,
       duration: data.duration,
       tracks: (data.tracks?.data ?? []).map(
-        (t: any, index: number): any => ({
+        (t: DeezerTrackItem, index: number): Track => ({
           id: String(t.id),
           title: t.title,
-          artist: data.artist?.name,
+          artist: data.artist?.name ?? "",
           duration: t.duration,
-          trackNumber: index + 1,
+          trackNumber: t.track_position ?? index + 1,
           previewUrl: t.preview,
         }),
       ),
@@ -243,28 +258,34 @@ export async function getAlbum(id: string): Promise<Album | null> {
   }
 }
 
-/** Get trending/chart songs */
-export async function getCharts(limit = 20): Promise<Song[]> {
+/** Find the best matching Deezer track for a detected song */
+export async function findTrack(
+  title: string,
+  artist: string,
+): Promise<Song | null> {
   try {
-    const { data } = await deezerClient.get("/chart/0/tracks", {
-      params: { limit },
-    });
-    return (data?.data ?? []).map(mapTrack);
-  } catch {
-    return [];
-  }
-}
-
-/** Get random songs for discovery */
-export async function getRandomSongs(limit = 12): Promise<Song[]> {
-  try {
-    const queries = ["pop 2024", "rock", "electronic", "hip hop", "jazz"];
-    const q = queries[Math.floor(Math.random() * queries.length)];
     const { data } = await deezerClient.get("/search", {
-      params: { q, limit, order: "RANDOM" },
+      params: { q: `${title} ${artist}`, limit: 10 },
     });
-    return (data?.data ?? []).map(mapTrack);
+    const tracks: DeezerTrack[] = data?.data ?? [];
+    if (tracks.length === 0) return null;
+
+    const normalize = (s: string) =>
+      s.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const t = normalize(title);
+    const a = normalize(artist);
+
+    const match =
+      tracks.find(
+        (x) =>
+          normalize(x.title_short || x.title).includes(t) &&
+          normalize(x.artist.name).includes(a),
+      ) ||
+      tracks.find((x) => normalize(x.artist.name).includes(a)) ||
+      tracks[0];
+
+    return mapTrack(match);
   } catch {
-    return [];
+    return null;
   }
 }

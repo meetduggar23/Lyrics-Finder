@@ -16,6 +16,7 @@
   --color-error: #e53935;
   --color-warning: #ffc107;
   --color-success: #1db954;
+  --color-accent-glow: rgba(29, 185, 84, 0.35);
 
   --radius-card: 1.25rem;
   --radius-xl-card: 1.5rem;

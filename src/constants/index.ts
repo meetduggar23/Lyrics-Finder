@@ -14,9 +14,8 @@ export const API = {
   lastfm: "https://ws.audioscrobbler.com/2.0",
 };
 
-// Last.fm API key (free public key for demo purposes)
-export const LASTFM_API_KEY =
-  import.meta.env.VITE_LASTFM_API_KEY || "d8a8de4f0f4b0e0f0f4b0e0f0f4b0e0f";
+// AudD recognition token (optional — set VITE_AUDD_API_KEY in .env)
+export const AUDD_API_TOKEN = import.meta.env.VITE_AUDD_API_KEY || "";
 
 // Local storage keys
 export const STORAGE_KEYS = {
@@ -36,15 +35,6 @@ export const DEFAULT_SETTINGS = {
   reduceMotion: false,
   rememberHistory: true,
 };
-
-// Navigation links
-export const NAV_LINKS = [
-  { label: "Discover", path: "/discover" },
-  { label: "Artists", path: "/discover?tab=artists" },
-  { label: "Albums", path: "/discover?tab=albums" },
-  { label: "Favorites", path: "/favorites" },
-  { label: "History", path: "/history" },
-];
 
 // Placeholder images
 export const PLACEHOLDER_IMAGE =

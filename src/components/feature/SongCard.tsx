@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Play, Pause, Heart, Clock } from "lucide-react";
@@ -6,7 +7,7 @@ import { cn } from "@/utils/cn";
 import { formatDuration } from "@/utils/format";
 import { PLACEHOLDER_IMAGE } from "@/constants";
 import { useFavoritesStore, songToFavorite } from "@/store/favorites";
-import { usePlayerStore } from "@/store/player";
+import { playPreview, stopPreview, subscribePreview, getPreviewingUrl } from "@/utils/audio";
 import { toastSuccess } from "@/store/toast";
 
 interface SongCardProps {
@@ -19,27 +20,26 @@ export function SongCard({ song, index = 0 }: SongCardProps) {
     s.isFavorite(song.id, "song"),
   );
   const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
-  const playSong = usePlayerStore((s) => s.playSong);
-  const current = usePlayerStore((s) => s.current);
-  const isPlaying = usePlayerStore((s) => s.isPlaying);
-  const togglePlay = usePlayerStore((s) => s.togglePlay);
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  const isCurrent =
-    current?.title === song.title && current?.artist === song.artist;
+  useEffect(() => {
+    if (!song.previewUrl) return;
+    const previewUrl = song.previewUrl;
+    const unsubscribe = subscribePreview(() => {
+      setIsPlaying(
+        getPreviewingUrl() === new URL(previewUrl, window.location.href).href,
+      );
+    });
+    return unsubscribe;
+  }, [song.previewUrl]);
 
   const handlePlay = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isCurrent) {
-      togglePlay();
-    } else {
-      playSong({
-        title: song.title,
-        artist: song.artist,
-        cover: song.cover || PLACEHOLDER_IMAGE,
-        previewUrl: song.previewUrl || "",
-        duration: song.duration || 30,
-      });
+    if (isPlaying) {
+      stopPreview();
+    } else if (song.previewUrl) {
+      playPreview(song.previewUrl);
     }
   };
 
@@ -72,22 +72,24 @@ export function SongCard({ song, index = 0 }: SongCardProps) {
             className="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-110"
             loading="lazy"
           />
-          <button
-            onClick={handlePlay}
-            className={cn(
-              "absolute bottom-2 right-2 flex h-11 w-11 items-center justify-center rounded-full bg-primary text-black shadow-xl transition-all duration-300",
-              isCurrent && isPlaying
-                ? "opacity-100 scale-100"
-                : "opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0",
-            )}
-            aria-label={isCurrent && isPlaying ? "Pause" : "Play"}
-          >
-            {isCurrent && isPlaying ? (
-              <Pause className="h-5 w-5" />
-            ) : (
-              <Play className="h-5 w-5 translate-x-0.5" />
-            )}
-          </button>
+          {song.previewUrl && (
+            <button
+              onClick={handlePlay}
+              className={cn(
+                "absolute bottom-2 right-2 flex h-11 w-11 items-center justify-center rounded-full bg-primary text-black shadow-xl transition-all duration-300",
+                isPlaying
+                  ? "opacity-100 scale-100"
+                  : "opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0",
+              )}
+              aria-label={isPlaying ? "Pause preview" : "Play preview"}
+            >
+              {isPlaying ? (
+                <Pause className="h-5 w-5" />
+              ) : (
+                <Play className="h-5 w-5 translate-x-0.5" />
+              )}
+            </button>
+          )}
         </div>
         <div className="space-y-1">
           <p className="truncate text-sm font-semibold text-foreground">

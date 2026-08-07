@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import { History as HistoryIcon, Search, Music2, User, Disc3, Trash2, FileText } from "lucide-react";
+import { History as HistoryIcon, Search, Music2, User, Disc3, Trash2, FileText, type LucideIcon } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useHistoryStore } from "@/store/history";
-import type { HistoryItem } from "@/types";
+import type { HistoryItem, Song, Album } from "@/types";
 import { useSettingsStore } from "@/store/settings";
 import { useToastStore } from "@/store/toast";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 
-const typeConfig: Record<string, { label: string; icon: any }> = {
+const typeConfig: Record<string, { label: string; icon: LucideIcon }> = {
   search: { label: "Search", icon: Search },
   song: { label: "Song", icon: Music2 },
   artist: { label: "Artist", icon: User },
@@ -24,11 +24,11 @@ export function History() {
 
   const handleOpen = (item: HistoryItem) => {
     if (item.type === "song" && item.data) {
-      navigate(`/song/${(item.data as any).id}`);
+      navigate(`/song/${(item.data as Song).id}`);
     } else if (item.type === "artist") {
       navigate(`/artist/${encodeURIComponent(item.title)}`);
     } else if (item.type === "album" && item.data) {
-      navigate(`/album/${(item.data as any).id}`);
+      navigate(`/album/${(item.data as Album).id}`);
     } else if (item.type === "search") {
       navigate(`/search?q=${encodeURIComponent(item.title)}`);
     }
@@ -77,7 +77,7 @@ export function History() {
           icon={<HistoryIcon className="h-8 w-8 text-primary" />}
           title="No history yet"
           description="When you view songs, artists, or albums, they'll appear here."
-          action={<Button onClick={() => navigate("/discover")}>Explore Music</Button>}
+          action={<Button onClick={() => navigate("/")}>Find Music</Button>}
         />
       ) : (
         <div className="space-y-2">

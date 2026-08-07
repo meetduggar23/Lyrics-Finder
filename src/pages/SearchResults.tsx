@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Search, User, Disc3, Music2 } from "lucide-react";
+import { Search, User, Music2, type LucideIcon } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useSearchResults } from "@/hooks/useSearch";
 import { SongCard } from "@/components/feature/SongCard";
 import { ArtistCard } from "@/components/feature/ArtistCard";
-import { AlbumCard } from "@/components/feature/AlbumCard";
 import { CardGridSkeleton } from "@/components/feature/Loaders";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { cn } from "@/utils/cn";
 
-type Tab = "all" | "songs" | "artists" | "albums";
+type Tab = "all" | "songs" | "artists";
 
 export function SearchResults() {
   const [searchParams] = useSearchParams();
@@ -21,11 +20,10 @@ export function SearchResults() {
 
   useDocumentTitle(query ? `Search: ${query}` : "Search");
 
-  const tabs: { id: Tab; label: string; count?: number; icon: any }[] = [
+  const tabs: { id: Tab; label: string; count?: number; icon: LucideIcon }[] = [
     { id: "all", label: "All", count: results.totalResults, icon: Search },
     { id: "songs", label: "Songs", count: results.songs.length, icon: Music2 },
     { id: "artists", label: "Artists", count: results.artists.length, icon: User },
-    { id: "albums", label: "Albums", count: results.albums.length, icon: Disc3 },
   ];
 
   if (!query) {
@@ -60,7 +58,6 @@ export function SearchResults() {
 
   const showSongs = tab === "all" || tab === "songs";
   const showArtists = tab === "all" || tab === "artists";
-  const showAlbums = tab === "all" || tab === "albums";
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
@@ -121,21 +118,6 @@ export function SearchResults() {
             </div>
           ) : tab === "artists" ? (
             <EmptyState icon={<User className="h-8 w-8 text-primary" />} title="No artists found" />
-          ) : null}
-        </section>
-      )}
-
-      {/* Albums */}
-      {showAlbums && (
-        <section>
-          {results.albums.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-              {results.albums.map((album, i) => (
-                <AlbumCard key={album.id} album={album} index={i} />
-              ))}
-            </div>
-          ) : tab === "albums" ? (
-            <EmptyState icon={<Disc3 className="h-8 w-8 text-primary" />} title="No albums found" />
           ) : null}
         </section>
       )}

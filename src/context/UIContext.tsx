@@ -1,23 +1,5 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  type ReactNode,
-} from "react";
-
-interface UIState {
-  searchOpen: boolean;
-  openSearch: () => void;
-  closeSearch: () => void;
-  mobileNavOpen: boolean;
-  openMobileNav: () => void;
-  closeMobileNav: () => void;
-  fullscreenLyrics: boolean;
-  setFullscreenLyrics: (v: boolean) => void;
-}
-
-const UIContext = createContext<UIState | undefined>(undefined);
+import { useState, useCallback, type ReactNode } from "react";
+import { UIContext } from "@/context/ui-context";
 
 export function UIProvider({ children }: { children: ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -45,12 +27,4 @@ export function UIProvider({ children }: { children: ReactNode }) {
       {children}
     </UIContext.Provider>
   );
-}
-
-export function useUI() {
-  const context = useContext(UIContext);
-  if (!context) {
-    throw new Error("useUI must be used within a UIProvider");
-  }
-  return context;
 }

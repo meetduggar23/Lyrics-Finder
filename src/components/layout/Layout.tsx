@@ -3,15 +3,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SearchBar } from "@/components/layout/SearchBar";
-import { MusicPlayer } from "@/components/feature/MusicPlayer";
 import { Toaster } from "@/components/ui/toast";
-import { useUI } from "@/context/UIContext";
-import { usePlayerStore } from "@/store/player";
+import { useUI } from "@/context/useUI";
 
 export function Layout() {
-const location = useLocation();
+  const location = useLocation();
   useUI();
-  const current = usePlayerStore((s) => s.current);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -31,10 +28,7 @@ const location = useLocation();
       </main>
       <Footer />
       <SearchBar />
-      <MusicPlayer />
       <Toaster />
-      {/* Add bottom padding when player is active */}
-      {current && <div className="h-24" aria-hidden="true" />}
     </div>
   );
 }

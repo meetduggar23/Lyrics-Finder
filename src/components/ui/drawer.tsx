@@ -71,7 +71,7 @@ export function Drawer({
             exit={initialClasses[side]}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
           >
-            {(title || true) && (
+            {title && (
               <div className="flex items-center justify-between border-b border-border p-5">
                 <h2 className="text-lg font-bold text-foreground">{title}</h2>
                 <button

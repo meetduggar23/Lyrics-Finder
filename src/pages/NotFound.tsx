@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Home, Compass, Music2 } from "lucide-react";
+import { Home, Music2 } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { Button } from "@/components/ui/button";
 
@@ -33,9 +33,9 @@ export function NotFound() {
             <Home className="h-4 w-4" />
             Go Home
           </Button>
-          <Button variant="outline" onClick={() => navigate("/discover")}>
-            <Compass className="h-4 w-4" />
-            Explore Music
+          <Button variant="outline" onClick={() => navigate("/search?q=love")}>
+            <Music2 className="h-4 w-4" />
+            Search Songs
           </Button>
         </div>
       </motion.div>

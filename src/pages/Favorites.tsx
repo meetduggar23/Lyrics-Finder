@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, Music2, User, Disc3, Trash2 } from "lucide-react";
+import { Heart, Music2, User, Disc3, Trash2, type LucideIcon } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useFavoritesStore } from "@/store/favorites";
-import type { FavoriteItem } from "@/types";
+import type { FavoriteItem, Song, Album } from "@/types";
 import { useToastStore, toastSuccess } from "@/store/toast";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -18,7 +18,7 @@ export function Favorites() {
   const { favorites, removeFavorite, clearFavorites } = useFavoritesStore();
   const [filter, setFilter] = useState<Filter>("all");
 
-  const filters: { id: Filter; label: string; icon: any; count: number }[] = [
+  const filters: { id: Filter; label: string; icon: LucideIcon; count: number }[] = [
     { id: "all", label: "All", icon: Heart, count: favorites.length },
     { id: "song", label: "Songs", icon: Music2, count: favorites.filter((f) => f.type === "song").length },
     { id: "artist", label: "Artists", icon: User, count: favorites.filter((f) => f.type === "artist").length },
@@ -34,15 +34,15 @@ export function Favorites() {
 
   const handleOpen = (item: FavoriteItem) => {
     if (item.type === "song" && item.data) {
-      navigate(`/song/${(item.data as any).id}`);
+      navigate(`/song/${(item.data as Song).id}`);
     } else if (item.type === "artist") {
       navigate(`/artist/${encodeURIComponent(item.title)}`);
     } else if (item.type === "album" && item.data) {
-      navigate(`/album/${(item.data as any).id}`);
+      navigate(`/album/${(item.data as Album).id}`);
     }
   };
 
-  const typeIcon: Record<string, any> = {
+  const typeIcon: Record<string, LucideIcon> = {
     song: Music2,
     artist: User,
     album: Disc3,
@@ -100,7 +100,7 @@ export function Favorites() {
               : "No items in this category."
           }
           action={
-            <Button onClick={() => navigate("/discover")}>Explore Music</Button>
+            <Button onClick={() => navigate("/")}>Find Music</Button>
           }
         />
       ) : (

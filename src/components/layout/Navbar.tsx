@@ -1,16 +1,16 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Menu, X, Home, Compass, Heart, History, Settings as SettingsIcon, Info } from "lucide-react";
+import { Search, Menu, X, Home, Heart, History, Settings as SettingsIcon, Info, AudioLines } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { Logo } from "@/components/common/Logo";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
-import { useUI } from "@/context/UIContext";
+import { useUI } from "@/context/useUI";
 import { useTheme } from "@/hooks/useTheme";
 import { useIsMobile } from "@/hooks/useMediaQuery";
 
 const navItems = [
   { label: "Home", path: "/", icon: Home },
-  { label: "Discover", path: "/discover", icon: Compass },
+  { label: "Listen", path: "/detect", icon: AudioLines },
   { label: "Favorites", path: "/favorites", icon: Heart },
   { label: "History", path: "/history", icon: History },
   { label: "Settings", path: "/settings", icon: SettingsIcon },
@@ -125,9 +125,16 @@ export function Navbar() {
                 ))}
               </nav>
               <div className="mt-auto border-t border-border pt-4">
-                <Link to="/discover" onClick={closeMobileNav} className="text-sm text-primary hover:underline">
-                  Explore Music →
-                </Link>
+                <button
+                  onClick={() => {
+                    closeMobileNav();
+                    openSearch();
+                  }}
+                  className="flex items-center gap-2 text-sm text-primary hover:underline"
+                >
+                  <Search className="h-4 w-4" />
+                  Search songs…
+                </button>
               </div>
             </motion.aside>
           </>

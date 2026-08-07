@@ -97,12 +97,15 @@ export interface HistoryItem {
   data?: unknown;
 }
 
-export interface PlayerState {
+export interface DetectedSong {
   title: string;
   artist: string;
-  cover: string;
-  previewUrl: string;
-  duration: number;
+  album?: string;
+  releaseDate?: string;
+  coverUrl?: string;
+  duration?: number;
+  songId?: string;
+  fromDemo?: boolean;
 }
 
 export interface Settings {

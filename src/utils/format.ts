@@ -59,6 +59,17 @@ export function stripHtml(html?: string): string {
   return html.replace(/<[^>]*>/g, "").trim();
 }
 
+/** Format a byte count into a readable file size */
+export function formatFileSize(bytes: number): string {
+  if (!bytes || bytes <= 0) return "0 B";
+  const units = ["B", "KB", "MB", "GB"];
+  const i = Math.min(
+    units.length - 1,
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+  );
+  return `${(bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
+}
+
 /** Capitalize first letter of each word */
 export function titleCase(text?: string): string {
   if (!text) return "";

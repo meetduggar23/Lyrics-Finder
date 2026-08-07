@@ -2,6 +2,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_LASTFM_API_KEY?: string;
+  readonly VITE_AUDD_API_KEY?: string;
   readonly VITE_API_PROXY?: string;
 }
 

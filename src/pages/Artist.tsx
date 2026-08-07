@@ -208,7 +208,7 @@ const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
       {/* Top tracks */}
       {tracks.length > 0 && (
         <section className="mb-10">
-          <SectionHeader title="Top Tracks" viewAllLink={`/discover?q=${encodeURIComponent(artist.name)}`} />
+          <SectionHeader title="Top Tracks" viewAllLink={`/search?q=${encodeURIComponent(artist.name)}`} />
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {tracks.map((song, i) => (
               <SongCard
@@ -224,7 +224,7 @@ const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
       {/* Albums */}
       {albums.length > 0 && (
         <section className="mb-10">
-          <SectionHeader title="Top Albums" viewAllLink={`/discover?tab=albums`} />
+          <SectionHeader title="Top Albums" viewAllLink={`/search?q=${encodeURIComponent(artist.name)}`} />
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
             {albums.map((album, i) => (
               <AlbumCard key={`${album.id}-${i}`} album={{ ...album, cover: album.cover || artist.image }} index={i} />
