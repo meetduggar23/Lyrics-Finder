@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="public/favicon.svg" alt="Songly Logo" width="72" height="72" />
+<img src="public/favicon.svg" alt="Songly Logo — music note on a green rounded square" width="72" height="72" />
 
-# SONGly AI
+# Songly <span style="color:#7FD9A6">AI</span>
 
 **Find any song. Instantly.**
 
@@ -104,4 +104,3 @@ The output is generated in the `dist/` directory, ready to deploy to any static 
 Made by **Meet Duggar**
 
 </div>
-
