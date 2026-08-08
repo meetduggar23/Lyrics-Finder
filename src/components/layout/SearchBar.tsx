@@ -94,7 +94,7 @@ export function SearchBar() {
               setQuery(e.target.value);
               setActiveIndex(-1);
             }}
-            placeholder="Search songs, artists, albums…"
+placeholder="Search songs or artists…"
             className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-muted focus:outline-none"
             aria-label="Search"
           />

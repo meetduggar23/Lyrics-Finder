@@ -128,18 +128,12 @@ export function DetectPage() {
               >
                 <p className="text-left text-sm text-secondary-text">{error}</p>
                 <div className="mt-4 flex justify-center gap-3">
-                  <button
+<button
                     onClick={startListening}
                     className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-[#F7EAE0] hover:bg-primary-hover"
                   >
                     <Mic className="h-4 w-4" />
                     Try Again
-                  </button>
-                  <button
-                    onClick={() => navigate("/search")}
-                    className="inline-flex h-10 items-center rounded-full border border-border px-5 text-sm font-medium text-secondary-text hover:text-primary"
-                  >
-                    Search Manually
                   </button>
                 </div>
               </motion.div>

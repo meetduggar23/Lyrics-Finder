@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Search } from "lucide-react";
+import { Search, Play, Pause, Heart } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { RecognitionPhase } from "@/hooks/useSongRecognition";
 import type { DetectedSong } from "@/types";
@@ -15,6 +15,11 @@ interface ListeningModuleProps {
   onCancel: () => void;
   detected?: DetectedSong | null;
   onLyrics?: () => void;
+  previewUrl?: string | null;
+  isPreviewPlaying?: boolean;
+  onPreview?: () => void;
+  isFavorite?: boolean;
+  onFavorite?: () => void;
 }
 
 const WAVE_BARS = 34;
@@ -76,7 +81,7 @@ function LiveWaveform({ slow = false }: { slow?: boolean }) {
   );
 }
 
-/** Lyrics Finder note mark, reused as the idle state of the detection control. */
+/** Songly note mark, reused as the idle state of the detection control. */
 function NoteMark() {
   return (
     <svg
@@ -106,12 +111,17 @@ export function ListeningModule({
   onCancel,
   detected,
   onLyrics,
+  previewUrl,
+  isPreviewPlaying,
+  onPreview,
+  isFavorite,
+  onFavorite,
 }: ListeningModuleProps) {
   const listening = phase === "listening";
   const analyzing = phase === "analyzing";
   const active = listening || analyzing;
 
-  return (
+return (
     <div className="flex flex-col items-center gap-4">
       {/* Detection control: logo when idle, live waveform while analyzing */}
       <div className="relative flex h-48 w-48 items-center justify-center sm:h-56 sm:w-56">
@@ -231,23 +241,56 @@ export function ListeningModule({
           </div>
         )}
 
-        {/* Success reveal: detected song + lyrics CTA */}
+{/* Success reveal: detected song + preview/favorite/lyrics actions */}
         {analyzing && detected && (
           <div className="flex flex-col items-center gap-2 text-center">
             <p className="flex items-center gap-1.5 text-sm font-semibold text-primary">
-              <span>✓</span> Song Detected
+              <span>✓</span> Song Found
             </p>
             <p className="max-w-[240px] truncate text-sm font-semibold text-foreground">
               {detected.title}
             </p>
             <p className="text-xs text-secondary-text">{detected.artist}</p>
-            <button
-              onClick={onLyrics}
-              className="mt-1 inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-bold text-[#F7EAE0] transition-colors hover:bg-primary-hover"
-            >
-              <Search className="h-3.5 w-3.5" />
-              View Lyrics
-            </button>
+            {detected.album && (
+              <p className="max-w-[240px] truncate text-xs text-muted">
+                {detected.album}
+              </p>
+            )}
+            <div className="mt-1 flex items-center gap-2">
+              {previewUrl && (
+                <button
+                  onClick={onPreview}
+                  className="inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-bold text-[#F7EAE0] transition-colors hover:bg-primary-hover"
+                  aria-label={isPreviewPlaying ? "Pause preview" : "Play preview"}
+                >
+                  {isPreviewPlaying ? (
+                    <Pause className="h-3.5 w-3.5" />
+                  ) : (
+                    <Play className="h-3.5 w-3.5" />
+                  )}
+                  Preview
+                </button>
+              )}
+              <button
+                onClick={onFavorite}
+                className={cn(
+                  "flex h-9 w-9 items-center justify-center rounded-full border transition-colors",
+                  isFavorite
+                    ? "border-primary/40 bg-primary/10 text-primary"
+                    : "border-border text-[#F7EAE0] hover:border-primary/40 hover:text-primary",
+                )}
+                aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+              >
+                <Heart className={cn("h-4 w-4", isFavorite && "fill-current")} />
+              </button>
+              <button
+                onClick={onLyrics}
+                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border px-4 text-xs font-bold text-secondary-text transition-colors hover:border-primary/40 hover:text-primary"
+              >
+                <Search className="h-3.5 w-3.5" />
+                View Lyrics
+              </button>
+            </div>
           </div>
         )}
 

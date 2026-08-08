@@ -14,11 +14,11 @@ const steps = [
     title: "AI Identifies It",
     desc: "Our recognition engine matches the audio against millions of tracks in seconds.",
   },
-  {
+{
     icon: Music,
     number: "03",
-    title: "Get Lyrics Instantly",
-    desc: "See full lyrics, artist info, and album details — and save everything to favorites.",
+    title: "Discover & Preview",
+    desc: "Preview the song, explore album details, and view lyrics — all in one place.",
   },
 ];
 

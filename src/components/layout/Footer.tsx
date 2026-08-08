@@ -16,8 +16,8 @@ export function Footer() {
           <div className="flex flex-col items-center gap-3 md:items-start">
             <Logo showText={false} />
             <p className="max-w-xs text-center text-sm text-secondary-text md:text-left">
-              Discover lyrics, explore artists, and feel the music — all in one
-              place.
+              Find any song. Instantly. Identify, search, and preview music —
+              all in one place.
             </p>
           </div>
 

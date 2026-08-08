@@ -1,43 +1,12 @@
-# Lyrics Finder AI — Build Progress
+# Task: Remove "Tap to Listen" and "Search Manually" labels
 
-## Phase 1 — Scaffolding & Config
-- [x] Create TODO.md
-- [x] Scaffold Vite + React 19 + TypeScript project
-- [x] Install dependencies
-- [x] Configure Tailwind CSS v4 theme
-- [x] Set up path aliases & config files
-
-## Phase 2 — Core Architecture
-- [x] Types (`types/`)
-- [x] Constants (`constants/`)
-- [x] API clients + Service layers (`api/`, `services/`)
-- [x] Zustand stores (`store/`)
-- [x] Hooks (`hooks/`)
-- [x] Utils (`utils/`)
-- [x] Context (`context/`)
-
-## Phase 3 — UI Component Library
-- [x] shadcn-style UI primitives (`components/ui/`)
-- [x] Common components (`components/common/`)
-- [x] Layout (Navbar, Footer, Layout, SearchBar)
-- [x] Feature components (SongCard, ArtistCard, AlbumCard, LyricsViewer, MusicPlayer, Loaders, SectionHeader)
-
-## Phase 4 — Pages & Routing
-- [x] Home
-- [x] Search Results
-- [x] Song/Lyrics
-- [x] Artist
-- [x] Album
-- [x] Discover
-- [x] Favorites
-- [x] History
-- [x] Settings
-- [x] About
-- [x] 404
-- [x] Lazy-loaded router + page transitions
-
-## Phase 5 — Polish & Verification
-- [x] Responsive design
-- [x] Accessibility
-- [x] Build + lint + fix errors
-- [x] Verify dev server
+## Steps
+- [x] 0. Analyze task and gather understanding
+- [x] 1. Search for "Tap to Listen" / "Search Manually" occurrences
+- [x] 2. Read relevant files (Hero, ListeningModule, Detect, Home, HowItWorks, MusicShowcase)
+- [x] 3. Create plan and get user confirmation
+- [x] 4. Remove "Tap to Listen" label in ListeningModule.tsx
+- [x] 5. Remove "Search Manually" button + handler in Hero.tsx
+- [x] 6. Remove "Search Instead" button (error state) in Hero.tsx
+- [x] 7. Remove "Search Manually" button in Detect.tsx error state
+- [x] 8. Verify no unused imports remain

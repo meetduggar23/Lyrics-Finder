@@ -47,8 +47,8 @@ export function FeaturesSection() {
         <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-xs font-semibold text-primary">
           Features
         </span>
-        <h2 className="text-2xl font-black tracking-tight text-foreground sm:text-3xl">
-          Everything you need to <span className="text-gradient-green">feel the music</span>
+<h2 className="text-2xl font-black tracking-tight text-foreground sm:text-3xl">
+          Everything you need to <span className="text-gradient-green">find any song</span>
         </h2>
       </motion.div>
 

@@ -87,7 +87,7 @@ export function Home() {
                   }
                 }}
                 onKeyDown={handleKeyDown}
-                placeholder="Search by song title or artist…"
+placeholder="Search songs or artists…"
                 className="h-14 w-full rounded-2xl border border-border bg-white/70 pl-12 pr-5 text-sm text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] backdrop-blur-md transition-all placeholder:text-muted hover:border-border focus:border-primary/50 focus:shadow-[0_0_0_4px_rgba(29,69,51,0.12),inset_0_1px_0_rgba(255,255,255,0.7)] focus:outline-none focus:placeholder:text-foreground/60"
                 autoComplete="off"
                 spellCheck={false}

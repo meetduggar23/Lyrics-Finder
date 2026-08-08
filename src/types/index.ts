@@ -1,4 +1,4 @@
-// Core domain types for the Lyrics Finder AI application
+// Core domain types for the Songly application
 
 export interface Song {
   id: string;

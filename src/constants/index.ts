@@ -1,8 +1,7 @@
 // Application-wide constants and configuration
 
-export const APP_NAME = "Lyrics Finder AI";
-export const APP_TAGLINE =
-  "Discover Lyrics. Explore Artists. Feel the Music.";
+export const APP_NAME = "Songly";
+export const APP_TAGLINE = "Find any song. Instantly.";
 export const APP_VERSION = "1.0.0";
 
 // API endpoints (raw upstream bases — proxying is handled in @/api/client)

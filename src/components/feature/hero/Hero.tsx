@@ -1,9 +1,16 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Mic, TriangleAlert } from "lucide-react";
 import { hasAuddKey } from "@/services/audd";
 import { useSongRecognition } from "@/hooks/useSongRecognition";
+import { useFavoritesStore } from "@/store/favorites";
+import {
+  playPreview,
+  stopPreview,
+  subscribePreview,
+  getPreviewingUrl,
+} from "@/utils/audio";
 import type { DetectedSong, Song } from "@/types";
 import { HeroBackground } from "./HeroBackground";
 import { ListeningModule } from "./ListeningModule";
@@ -18,6 +25,8 @@ const staggerItem = (delay: number) => ({
 export function Hero() {
   const navigate = useNavigate();
   const [detectedTrack, setDetectedTrack] = useState<Song | null>(null);
+  const [previewPlaying, setPreviewPlaying] = useState(false);
+  const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
 
   const onDetected = useCallback((_detected: DetectedSong, track: Song | null) => {
     setDetectedTrack(track);
@@ -33,8 +42,59 @@ export function Hero() {
     cancelListening,
   } = useSongRecognition(onDetected);
 
-  const handleStartListening = () => {
+  const previewUrl = detectedTrack?.previewUrl || null;
+
+  const favId = detectedTrack
+    ? detectedTrack.id
+    : detectedSong
+      ? `detected-${detectedSong.title}`
+      : "";
+  const isFavorite = useFavoritesStore((s) =>
+    favId ? s.isFavorite(favId, "song") : false,
+  );
+
+  const toggleDetectedFavorite = () => {
+    if (detectedTrack) {
+      toggleFavorite({
+        id: detectedTrack.id,
+        type: "song",
+        title: detectedTrack.title,
+        subtitle: detectedTrack.artist,
+        image: detectedTrack.cover,
+      });
+    } else if (detectedSong) {
+      toggleFavorite({
+        id: favId,
+        type: "song",
+        title: detectedSong.title,
+        subtitle: detectedSong.artist,
+        image: detectedSong.coverUrl,
+      });
+    }
+  };
+
+const handlePreview = () => {
+    if (!previewUrl) return;
+    playPreview(previewUrl);
+  };
+
+  // Keep the preview button in sync with the shared audio element.
+  useEffect(() => {
+    const sync = () => {
+      const expected = previewUrl
+        ? new URL(previewUrl, window.location.href).href
+        : null;
+      setPreviewPlaying(expected !== null && getPreviewingUrl() === expected);
+    };
+    sync();
+    const unsubscribe = subscribePreview(sync);
+    return unsubscribe;
+  }, [previewUrl]);
+
+const handleStartListening = () => {
     setDetectedTrack(null);
+    setPreviewPlaying(false);
+    stopPreview();
     startListening();
   };
 
@@ -45,15 +105,6 @@ export function Hero() {
       navigate(
         `/search?q=${encodeURIComponent(`${detectedSong.title} ${detectedSong.artist}`)}`,
       );
-    }
-  };
-
-  const handleManualSearch = () => {
-    const target = document.getElementById("manual-search");
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "center" });
-    } else {
-      navigate("/search");
     }
   };
 
@@ -69,22 +120,20 @@ export function Hero() {
           {/* LEFT — primary interaction area */}
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
             <motion.div {...staggerItem(0.05)} className="w-full">
-              <span className="sr-only">AI Music Recognition</span>
+<span className="sr-only">Song Discovery</span>
               <h1 className="text-4xl font-black leading-[1.06] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-                Find Any Song
+                Find Any Song.
                 <br />
-                With <span className="text-gradient-green">AI</span>
-                <br />
-                In <span className="text-gradient-green">Seconds</span>.
+                <span className="text-gradient-green">Instantly.</span>
               </h1>
               <p className="mx-auto mt-4 max-w-md text-base text-secondary-text sm:text-lg lg:mx-0">
-                Identify songs playing around you and instantly discover lyrics,
-                artist information, and album details.
+                Identify songs playing around you or search for any song by
+                title or artist.
               </p>
             </motion.div>
 
             <motion.div {...staggerItem(0.15)} className="mt-8 w-full sm:mt-10">
-              <ListeningModule
+<ListeningModule
                 phase={phase}
                 seconds={seconds}
                 progress={progress}
@@ -92,10 +141,15 @@ export function Hero() {
                 onLyrics={handleLyrics}
                 onStart={handleStartListening}
                 onCancel={cancelListening}
+                previewUrl={previewUrl}
+                isPreviewPlaying={previewPlaying}
+                onPreview={handlePreview}
+                isFavorite={isFavorite}
+                onFavorite={toggleDetectedFavorite}
               />
             </motion.div>
 
-            {/* Error */}
+{/* Error */}
             <AnimatePresence>
               {phase === "error" && error && (
                 <motion.div
@@ -108,19 +162,13 @@ export function Hero() {
                     <TriangleAlert className="mt-0.5 h-5 w-5 shrink-0 text-error" />
                     {error}
                   </p>
-                  <div className="mt-4 flex justify-center gap-3 lg:justify-start">
+<div className="mt-4 flex justify-center gap-3 lg:justify-start">
                     <button
                       onClick={handleStartListening}
                       className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-[#F7EAE0] hover:bg-primary-hover"
                     >
                       <Mic className="h-4 w-4" />
                       Try Again
-                    </button>
-                    <button
-                      onClick={handleManualSearch}
-                      className="inline-flex h-10 items-center gap-2 rounded-full border border-border px-5 text-sm font-medium text-secondary-text hover:text-primary"
-                    >
-                      Search Instead
                     </button>
                   </div>
                 </motion.div>
@@ -165,8 +213,8 @@ export function Hero() {
           className="mx-auto mt-10 flex max-w-[1000px] flex-col items-center gap-8 lg:mt-12 lg:flex-row lg:items-center lg:justify-center lg:gap-16"
         >
           {/* Description */}
-          <p className="max-w-[420px] text-center text-base leading-relaxed text-secondary-text">
-            Tap the microphone and let AI identify the music around you.
+<p className="max-w-[420px] text-center text-base leading-relaxed text-secondary-text">
+            Tap to listen and let AI identify the music around you.
           </p>
 
           {/* Stats */}
@@ -185,10 +233,10 @@ export function Hero() {
               </p>
             </div>
             <span className="h-9 w-px bg-[#5E3122]/15" />
-            <div className="text-center">
+<div className="text-center">
               <p className="text-xl font-extrabold text-foreground">Millions</p>
               <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-widest text-muted">
-                Lyrics
+                Tracks
               </p>
             </div>
           </div>

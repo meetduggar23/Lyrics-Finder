@@ -50,7 +50,7 @@ export function Logo({ className, showText = true, size = "md" }: LogoProps) {
       {showText && (
         <div className="flex flex-col leading-none">
           <span className="text-lg font-extrabold tracking-tight text-foreground">
-            Lyrics Finder
+            Songly
           </span>
           <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
             AI

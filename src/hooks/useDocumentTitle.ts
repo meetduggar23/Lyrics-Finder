@@ -3,7 +3,7 @@ import { APP_NAME } from "@/constants";
 
 /**
  * Sets the document title on mount and cleanup.
- * Format: "Page — Lyrics Finder AI"
+* Format: "Page — Songly"
  */
 export function useDocumentTitle(title?: string) {
   useEffect(() => {

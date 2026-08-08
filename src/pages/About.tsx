@@ -29,9 +29,9 @@ export function About() {
           About <span className="text-gradient-green">{APP_NAME}</span>
         </h1>
         <p className="mx-auto max-w-2xl text-secondary-text sm:text-lg">
-          {APP_NAME} is a modern lyrics finder that identifies songs from your
-          microphone and gives you instant lyrics, artist info, and album
-          details — in a beautiful, Shazam-inspired interface.
+          {APP_NAME} is a modern song discovery app that identifies songs from
+          your microphone or searches by title and artist — with instant
+          previews, album details, and lyrics — in a beautiful interface.
         </p>
         <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted">
           <span>Version {APP_VERSION}</span>
@@ -60,7 +60,7 @@ export function About() {
       <div className="mt-12 rounded-3xl border border-border bg-gradient-to-br from-primary/20 via-card to-card p-8 text-center sm:p-12">
         <h2 className="mb-2 text-2xl font-bold text-foreground">Ready to find a song?</h2>
         <p className="mb-6 text-secondary-text">
-          Tap the button, play any song, and get its lyrics instantly.
+          Tap to listen, play any song, and identify it instantly.
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <Button onClick={() => navigate("/")}>Start Listening</Button>

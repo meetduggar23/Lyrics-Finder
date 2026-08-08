@@ -26,7 +26,7 @@ export function downloadLyrics(
   lyrics: string,
 ): void {
   const header = `${title}\n${artist}\n${"=".repeat(Math.max(title.length, artist.length))}\n\n`;
-  const footer = `\n\n---\nLyrics via Lyrics Finder AI`;
+  const footer = `\n\n---\nLyrics via Songly`;
   const safeTitle = title.replace(/[\\/:*?"<>|]/g, "_");
   downloadTextFile(`${safeTitle} - ${artist}.txt`, header + lyrics + footer);
 }
@@ -35,3 +35,4 @@ export function downloadLyrics(
 export function downloadJSON(filename: string, data: unknown): void {
   downloadTextFile(filename, JSON.stringify(data, null, 2), "application/json");
 }
+
