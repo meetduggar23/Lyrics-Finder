@@ -2,7 +2,7 @@
 
 <img src="public/favicon.svg" alt="Songly Logo" width="72" height="72" />
 
-# SONGly
+# SONGly.AI
 
 **Find any song. Instantly.**
 
