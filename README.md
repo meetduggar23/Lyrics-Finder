@@ -97,10 +97,6 @@ npm run build
 
 The output is generated in the `dist/` directory, ready to deploy to any static hosting service like **Vercel**, **Netlify**, **GitHub Pages**, or **Cloudflare Pages**.
 
-## License
-
-This project is for educational and demonstration purposes. Music data is provided by public APIs — **Deezer**, **iTunes**, **Last.fm**, and **Lyrics APIs**. All trademarks and artist content belong to their respective owners.
-
 ---
 
 <div align="center">
