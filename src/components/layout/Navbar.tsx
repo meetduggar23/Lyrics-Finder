@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Menu, X, Home, Heart, History, Settings as SettingsIcon, Info, AudioLines } from "lucide-react";
+import { Search, Menu, X, Home, Heart, Info, AudioLines } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { Logo } from "@/components/common/Logo";
 import { useUI } from "@/context/useUI";
@@ -10,8 +10,6 @@ const navItems = [
   { label: "Home", path: "/", icon: Home },
   { label: "Listen", path: "/detect", icon: AudioLines },
   { label: "Favorites", path: "/favorites", icon: Heart },
-  { label: "History", path: "/history", icon: History },
-  { label: "Settings", path: "/settings", icon: SettingsIcon },
   { label: "About", path: "/about", icon: Info },
 ];
 

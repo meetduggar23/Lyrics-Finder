@@ -21,12 +21,6 @@ const AlbumPage = lazy(() =>
 const Favorites = lazy(() =>
   import("@/pages/Favorites").then((m) => ({ default: m.Favorites })),
 );
-const History = lazy(() =>
-  import("@/pages/History").then((m) => ({ default: m.History })),
-);
-const Settings = lazy(() =>
-  import("@/pages/Settings").then((m) => ({ default: m.Settings })),
-);
 const About = lazy(() => import("@/pages/About").then((m) => ({ default: m.About })));
 const NotFound = lazy(() =>
   import("@/pages/NotFound").then((m) => ({ default: m.NotFound })),
@@ -97,22 +91,6 @@ export default function App() {
           element={
             <Suspense fallback={<PageLoader />}>
               <Favorites />
-            </Suspense>
-          }
-        />
-        <Route
-          path="history"
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <History />
-            </Suspense>
-          }
-        />
-        <Route
-          path="settings"
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <Settings />
             </Suspense>
           }
         />

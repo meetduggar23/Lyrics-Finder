@@ -9,7 +9,6 @@ import type { Artist as ArtistType, Song, Album } from "@/types";
 import { PLACEHOLDER_IMAGE } from "@/constants";
 import { formatNumber } from "@/utils/format";
 import { useFavoritesStore, artistToFavorite } from "@/store/favorites";
-import { useHistoryStore } from "@/store/history";
 import { SongCard } from "@/components/feature/SongCard";
 import { AlbumCard } from "@/components/feature/AlbumCard";
 import { ArtistCard } from "@/components/feature/ArtistCard";
@@ -34,7 +33,6 @@ export function ArtistPage() {
     s.isFavorite(artist?.id || decodedName, "artist"),
   );
 const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
-  const addHistory = useHistoryStore((s) => s.addItem);
 
   useEffect(() => {
     let cancelled = false;
@@ -81,14 +79,6 @@ const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
         }
 
         setArtist(artistData);
-        addHistory({
-          id: `artist-${artistData.id}`,
-          type: "artist",
-          title: artistData.name,
-          subtitle: artistData.genres?.[0],
-          image: artistData.image,
-          data: artistData,
-        });
 
         setSimilar(similarArtists.status === "fulfilled" ? similarArtists.value : []);
 
@@ -111,7 +101,7 @@ const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
     return () => {
       cancelled = true;
     };
-  }, [decodedName, addHistory]);
+  }, [decodedName]);
 
   useDocumentTitle(artist ? artist.name : "Artist");
 

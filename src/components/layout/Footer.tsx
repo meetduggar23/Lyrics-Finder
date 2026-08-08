@@ -1,13 +1,10 @@
 import { Link } from "react-router-dom";
 import { Logo } from "@/components/common/Logo";
-import { APP_NAME, APP_VERSION } from "@/constants";
 
 const footerLinks = [
   { label: "Home", path: "/" },
   { label: "Listen", path: "/detect" },
   { label: "Favorites", path: "/favorites" },
-  { label: "History", path: "/history" },
-  { label: "Settings", path: "/settings" },
   { label: "About", path: "/about" },
 ];
 
@@ -38,13 +35,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 flex flex-col items-center justify-between gap-2 border-t border-border pt-6 text-xs text-muted md:flex-row">
-          <p>
-            © {new Date().getFullYear()} {APP_NAME}. All rights reserved.
-          </p>
-          <p>
-            Data provided by Deezer, iTunes, Last.fm, Lyrics.ovh, and LRC Lib.
-          </p>
-          <p>v{APP_VERSION}</p>
+          <p>Made by Meet Duggar</p>
         </div>
       </div>
     </footer>

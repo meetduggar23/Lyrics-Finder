@@ -1,11 +1,10 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, X, TrendingUp, Clock } from "lucide-react";
+import { Search, X, TrendingUp } from "lucide-react";
 import { useUI } from "@/context/useUI";
 import { useLiveSearch } from "@/hooks/useSearch";
 import { useKeyboardNavigation } from "@/hooks/useKeyboardNavigation";
-import { useHistoryStore } from "@/store/history";
 import { cn } from "@/utils/cn";
 import { PLACEHOLDER_IMAGE } from "@/constants";
 
@@ -15,16 +14,9 @@ export function SearchBar() {
   const { query, setQuery, suggestions, isSearching, clearSearch } =
     useLiveSearch();
   const [activeIndex, setActiveIndex] = useState(-1);
-  const addHistory = useHistoryStore((s) => s.addItem);
-  const historyItems = useHistoryStore((s) => s.items);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const recentSearches = historyItems
-    .filter((i) => i.type === "search")
-    .slice(0, 5);
-
   const selectSuggestion = (title: string, artist?: string) => {
-    addHistory({ id: `search-${title}`, type: "search", title });
     closeSearch();
     navigate(`/search?q=${encodeURIComponent(`${title}${artist ? ` ${artist}` : ""}`)}`);
     clearSearch();
@@ -33,7 +25,6 @@ export function SearchBar() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
-    addHistory({ id: `search-${query}`, type: "search", title: query });
     closeSearch();
     navigate(`/search?q=${encodeURIComponent(query)}`);
     clearSearch();
@@ -111,29 +102,7 @@ export function SearchBar() {
         </form>
 
         <div className="max-h-[60vh] overflow-y-auto p-2">
-          {!query && recentSearches.length > 0 && (
-            <div className="p-2">
-              <p className="mb-2 flex items-center gap-2 px-2 text-xs font-semibold uppercase tracking-wide text-secondary-text">
-                <Clock className="h-3.5 w-3.5" /> Recent
-              </p>
-              {recentSearches.map((r) => (
-                <button
-                  key={r.id}
-                  onClick={() => {
-                    addHistory(r);
-                    closeSearch();
-                    navigate(`/search?q=${encodeURIComponent(r.title)}`);
-                  }}
-                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-secondary-text transition-colors hover:bg-card hover:text-foreground"
-                >
-                  <Clock className="h-4 w-4 text-muted" />
-                  {r.title}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {!query && recentSearches.length === 0 && (
+          {!query && (
             <div className="flex items-center gap-3 p-4 text-sm text-secondary-text">
               <TrendingUp className="h-4 w-4 text-primary" />
               Type to search across songs, artists, and albums.

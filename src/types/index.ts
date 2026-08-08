@@ -87,16 +87,6 @@ export interface FavoriteItem {
   data?: Song | Artist | Album;
 }
 
-export interface HistoryItem {
-  id: string;
-  type: "search" | "song" | "artist" | "album" | "lyrics";
-  title: string;
-  subtitle?: string;
-  image?: string;
-  viewedAt: number;
-  data?: unknown;
-}
-
 export interface DetectedSong {
   title: string;
   artist: string;
@@ -106,13 +96,4 @@ export interface DetectedSong {
   duration?: number;
   songId?: string;
   fromDemo?: boolean;
-}
-
-export interface Settings {
-  defaultLyricsSource: "auto" | "ovh" | "lrclib";
-  fontSize: "sm" | "md" | "lg" | "xl";
-  autoScroll: boolean;
-  readingMode: boolean;
-  reduceMotion: boolean;
-  rememberHistory: boolean;
 }

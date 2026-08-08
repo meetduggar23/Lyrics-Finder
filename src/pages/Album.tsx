@@ -8,7 +8,6 @@ import type { Album as AlbumType, Track } from "@/types";
 import { PLACEHOLDER_IMAGE } from "@/constants";
 import { formatDuration, formatDate } from "@/utils/format";
 import { useFavoritesStore, albumToFavorite } from "@/store/favorites";
-import { useHistoryStore } from "@/store/history";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ErrorState } from "@/components/ui/error-state";
@@ -26,7 +25,6 @@ const { id } = useParams<{ id: string }>();
     s.isFavorite(id || "", "album"),
   );
   const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
-  const addHistory = useHistoryStore((s) => s.addItem);
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -62,21 +60,13 @@ const { id } = useParams<{ id: string }>();
       }
       setAlbum(data);
       setLoading(false);
-      addHistory({
-        id: `album-${data.id}`,
-        type: "album",
-        title: data.title,
-        subtitle: data.artist,
-        image: data.cover,
-        data,
-      });
     };
 
     load();
     return () => {
       cancelled = true;
     };
-  }, [id, addHistory]);
+  }, [id]);
 
   useDocumentTitle(album ? `${album.title} — ${album.artist}` : "Album");
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Play, Pause, Heart, Clock, Music2, Share2 } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
@@ -9,8 +9,6 @@ import type { Song as SongType, Lyrics } from "@/types";
 import { PLACEHOLDER_IMAGE } from "@/constants";
 import { formatDuration } from "@/utils/format";
 import { useFavoritesStore, songToFavorite } from "@/store/favorites";
-import { useHistoryStore } from "@/store/history";
-import { useSettingsStore } from "@/store/settings";
 import { LyricsViewer } from "@/components/feature/LyricsViewer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,9 +29,6 @@ export function SongPage() {
     s.isFavorite(id || "", "song"),
   );
   const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
-  const addHistory = useHistoryStore((s) => s.addItem);
-  const defaultSource = useSettingsStore((s) => s.settings.defaultLyricsSource);
-  const navigate = useNavigate();
 
   useEffect(() => {
     let cancelled = false;
@@ -55,20 +50,13 @@ export function SongPage() {
       }
       setSong(data);
       setLoading(false);
-      addHistory({
-        id: `song-${data.id}`,
-        type: "song",
-        title: data.title,
-        subtitle: data.artist,
-        image: data.cover,
-        data,
-      });
 
       setLyricsLoading(true);
-      const songLyrics = await getLyrics(
-        { title: data.title, artist: data.artist, duration: data.duration },
-        defaultSource,
-      );
+      const songLyrics = await getLyrics({
+        title: data.title,
+        artist: data.artist,
+        duration: data.duration,
+      });
       if (!cancelled) {
         setLyrics(songLyrics);
         setLyricsLoading(false);
@@ -79,7 +67,7 @@ export function SongPage() {
     return () => {
       cancelled = true;
     };
-  }, [id, defaultSource, addHistory]);
+  }, [id]);
 
   useDocumentTitle(song ? `${song.title} — ${song.artist}` : "Song");
 
@@ -235,13 +223,7 @@ export function SongPage() {
       {/* Source note */}
       <div className="mt-6 flex items-center gap-2 text-xs text-muted">
         <Music2 className="h-4 w-4" />
-        Lyrics provided by Lyrics.ovh & LRC Lib. Change default source in{" "}
-        <button
-          onClick={() => navigate("/settings")}
-          className="text-primary hover:underline"
-        >
-          Settings
-        </button>
+        Lyrics provided by Lyrics.ovh &amp; LRC Lib.
       </div>
     </div>
   );

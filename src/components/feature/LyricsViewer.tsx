@@ -9,7 +9,6 @@ import {
   estimateReadingTime,
 } from "@/utils/lyrics";
 import { downloadLyrics } from "@/utils/download";
-import { useSettingsStore } from "@/store/settings";
 import { DEFAULT_FONT_SIZES } from "@/constants";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,8 +28,7 @@ export function LyricsViewer({
   lyrics,
   loading,
 }: LyricsViewerProps) {
-  const fontSize = useSettingsStore((s) => s.settings.fontSize);
-  const fontClass = DEFAULT_FONT_SIZES[fontSize];
+  const fontClass = DEFAULT_FONT_SIZES.md;
 
   if (loading) {
     return (

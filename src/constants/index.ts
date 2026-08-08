@@ -20,18 +20,6 @@ export const AUDD_API_TOKEN = import.meta.env.VITE_AUDD_API_KEY || "";
 // Local storage keys
 export const STORAGE_KEYS = {
   favorites: "lfai_favorites",
-  history: "lfai_history",
-  settings: "lfai_settings",
-};
-
-// Default settings
-export const DEFAULT_SETTINGS = {
-  defaultLyricsSource: "auto" as const,
-  fontSize: "md" as const,
-  autoScroll: true,
-  readingMode: false,
-  reduceMotion: false,
-  rememberHistory: true,
 };
 
 // Placeholder images
