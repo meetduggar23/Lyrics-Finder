@@ -87,28 +87,6 @@ Create a `.env` file in the root directory (optional — the app works out of th
 # Last.fm API key (optional, a public demo key is used by default)
 VITE_LASTFM_API_KEY=your_lastfm_api_key
 ```
-
-## Project Structure
-
-```
-src/
-├── api/            # HTTP client configuration
-├── components/
-│   ├── common/     # Shared UI components (Logo, ThemeToggle, etc.)
-│   ├── feature/    # Feature-specific components (LyricsViewer, MusicPlayer, etc.)
-│   ├── layout/     # Layout components (Navbar, Footer, SearchBar)
-│   └── ui/         # shadcn-style UI primitives (Button, Card, Modal, etc.)
-├── constants/      # App-wide constants & configuration
-├── context/        # React context providers
-├── hooks/          # Custom React hooks
-├── pages/          # Route pages (Home, Search, Artist, Album, etc.)
-├── services/       # API service layers (Deezer, iTunes, Last.fm, Lyrics)
-├── store/          # Zustand stores (favorites, history, player, settings)
-├── styles/         # Global styles & Tailwind theme
-├── types/          # TypeScript type definitions
-└── utils/          # Utility functions
-```
-
 ## Deployment
 
 Build the project for production:
