@@ -1,12 +1,12 @@
 <div align="center">
 
-<img src="public/favicon.svg" alt="Lyrics Finder AI Logo" width="72" height="72" />
+<img src="public/favicon.svg" alt="Songly Logo" width="72" height="72" />
 
-# Lyrics Finder AI
+# SONGly
 
-**Discover Lyrics. Explore Artists. Feel the Music.**
+**Find any song. Instantly.**
 
-A modern, feature-rich music lyrics search application built with **React 19**, **Vite**, and **TypeScript**. Search for songs, explore artists and albums, view synchronized lyrics, and build your personal music library — all in a beautiful, responsive interface.
+A modern, feature-rich song discovery and identification application built with **React 19**, **Vite**, and **TypeScript**. Identify songs playing around you, search by title or artist, preview music, and view lyrics — all in a beautiful, responsive interface.
 
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
