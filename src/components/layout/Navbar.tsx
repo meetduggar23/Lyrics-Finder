@@ -58,7 +58,7 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             <button
               onClick={openSearch}
-              className="flex h-10 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm text-secondary-text transition-colors hover:border-primary/40 hover:text-primary"
+              className="flex h-10 items-center gap-2 rounded-full border border-white/10 bg-black/30 px-4 text-sm text-secondary-text transition-all hover:border-primary/40 hover:text-primary hover:shadow-[0_0_18px_rgba(29,185,84,0.15)]"
               aria-label="Search"
             >
               <Search className="h-4 w-4" />

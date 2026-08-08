@@ -116,9 +116,9 @@ export function Hero() {
               </button>
               <button
                 onClick={handleManualSearch}
-                className="inline-flex h-12 items-center gap-2 rounded-full border border-border bg-card/60 px-7 text-sm font-semibold text-secondary-text transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary active:scale-95"
+                className="inline-flex h-12 items-center rounded-full border border-border bg-card/60 px-7 text-sm font-semibold text-secondary-text transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary active:scale-95"
               >
-                🔍 Search Manually
+                Search Manually
               </button>
             </motion.div>
 

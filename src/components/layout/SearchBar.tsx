@@ -137,7 +137,6 @@ export function SearchBar() {
                 </p>
                 <p className="truncate text-xs text-secondary-text">{s.artist}</p>
               </div>
-              <Search className="ml-auto h-4 w-4 shrink-0 text-muted" />
             </button>
           ))}
         </div>
