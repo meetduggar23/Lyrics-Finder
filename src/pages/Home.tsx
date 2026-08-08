@@ -7,9 +7,8 @@ import { Hero } from "@/components/feature/hero/Hero";
 import { HowItWorks } from "@/components/feature/landing/HowItWorks";
 import { FeaturesSection } from "@/components/feature/landing/FeaturesSection";
 import { SearchSuggestionsDropdown } from "@/components/feature/search/SearchSuggestionsDropdown";
+import { navigateToSuggestion } from "@/utils/suggestionNavigation";
 import type { SearchSuggestion } from "@/types";
-
-const isNumericId = (id?: string) => /^\d+$/.test(id || "");
 
 export function Home() {
   useDocumentTitle();
@@ -39,24 +38,7 @@ export function Home() {
     setDropdownOpen(false);
     setActiveIndex(-1);
     clearSuggestions();
-
-    if (suggestion.kind === "song" && suggestion.song) {
-      navigate(`/song/${suggestion.song.id}`);
-    } else if (suggestion.kind === "artist" && suggestion.artist?.name) {
-      navigate(`/artist/${encodeURIComponent(suggestion.artist.name)}`);
-    } else if (suggestion.kind === "album" && suggestion.album) {
-      if (isNumericId(suggestion.album.id)) {
-        navigate(`/album/${suggestion.album.id}`);
-      } else {
-        navigate(
-          `/search?q=${encodeURIComponent(
-            `${suggestion.album.title} ${suggestion.album.artist}`,
-          )}`,
-        );
-      }
-    } else {
-      navigate(`/search?q=${encodeURIComponent(suggestion.title)}`);
-    }
+    navigateToSuggestion(navigate, suggestion);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

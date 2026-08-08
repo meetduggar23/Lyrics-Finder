@@ -1,25 +1,47 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, X, TrendingUp } from "lucide-react";
 import { useUI } from "@/context/useUI";
-import { useLiveSearch } from "@/hooks/useSearch";
+import { useSearchSuggestions } from "@/hooks/useSearchSuggestions";
 import { useKeyboardNavigation } from "@/hooks/useKeyboardNavigation";
-import { cn } from "@/utils/cn";
-import { PLACEHOLDER_IMAGE } from "@/constants";
+import { stopPreview, playPreview } from "@/utils/audio";
+import { navigateToSuggestion } from "@/utils/suggestionNavigation";
+import { SuggestionRow } from "@/components/feature/search/SuggestionRow";
+import type { SearchSuggestion } from "@/types";
 
 export function SearchBar() {
   const { searchOpen, closeSearch } = useUI();
   const navigate = useNavigate();
-  const { query, setQuery, suggestions, isSearching, clearSearch } =
-    useLiveSearch();
+  const [query, setQuery] = useState("");
+  const { suggestions, isLoading, clearSuggestions } =
+    useSearchSuggestions(query);
   const [activeIndex, setActiveIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
+  const playingRef = useRef(false);
 
-  const selectSuggestion = (title: string, artist?: string) => {
+  // Stop previews started from this modal when it unmounts (closes).
+  useEffect(() => {
+    return () => {
+      if (playingRef.current) stopPreview();
+    };
+  }, []);
+
+  const handleTogglePlay = (previewUrl: string, isPlaying: boolean) => {
+    if (isPlaying) {
+      stopPreview();
+      playingRef.current = false;
+    } else {
+      playPreview(previewUrl);
+      playingRef.current = true;
+    }
+  };
+
+  const selectSuggestion = (suggestion: SearchSuggestion) => {
+    setQuery(suggestion.title);
     closeSearch();
-    navigate(`/search?q=${encodeURIComponent(`${title}${artist ? ` ${artist}` : ""}`)}`);
-    clearSearch();
+    navigateToSuggestion(navigate, suggestion);
+    clearSuggestions();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -27,14 +49,14 @@ export function SearchBar() {
     if (!query.trim()) return;
     closeSearch();
     navigate(`/search?q=${encodeURIComponent(query)}`);
-    clearSearch();
+    clearSuggestions();
   };
 
   useKeyboardNavigation({
     items: suggestions,
     activeIndex,
     onActiveChange: setActiveIndex,
-    onSelect: (item) => selectSuggestion(item.title, item.artist),
+    onSelect: (item) => selectSuggestion(item),
     enabled: searchOpen && suggestions.length > 0,
   });
 
@@ -76,7 +98,7 @@ export function SearchBar() {
             className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-muted focus:outline-none"
             aria-label="Search"
           />
-          {isSearching && (
+          {isLoading && (
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-primary" />
           )}
           {query && (
@@ -109,35 +131,21 @@ export function SearchBar() {
             </div>
           )}
 
-          {query && suggestions.length === 0 && !isSearching && (
+          {query && suggestions.length === 0 && !isLoading && (
             <div className="p-4 text-sm text-secondary-text">
               No results for “{query}”. Press Enter to search all.
             </div>
           )}
 
           {suggestions.map((s, i) => (
-            <button
-              key={s.id}
-              onClick={() => selectSuggestion(s.title, s.artist)}
-              onMouseEnter={() => setActiveIndex(i)}
-              className={cn(
-                "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors",
-                i === activeIndex ? "bg-primary/10" : "hover:bg-card",
-              )}
-            >
-              <img
-                src={s.coverSmall || PLACEHOLDER_IMAGE}
-                alt=""
-                className="h-10 w-10 rounded-lg object-cover"
-                loading="lazy"
-              />
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-foreground">
-                  {s.title}
-                </p>
-                <p className="truncate text-xs text-secondary-text">{s.artist}</p>
-              </div>
-            </button>
+            <SuggestionRow
+              key={`${s.kind}-${s.id}`}
+              suggestion={s}
+              active={i === activeIndex}
+              onSelect={() => selectSuggestion(s)}
+              onActiveChange={() => setActiveIndex(i)}
+              onTogglePlay={handleTogglePlay}
+            />
           ))}
         </div>
       </motion.div>
