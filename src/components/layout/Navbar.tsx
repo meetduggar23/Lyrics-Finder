@@ -29,48 +29,56 @@ export function Navbar() {
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 120, damping: 20 }}
-        className="glass sticky top-0 z-50 border-b border-border"
+        className="sticky top-0 z-50 border-b border-white/[0.08] bg-[#090B0A]"
       >
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
-          <Logo />
+        <div className="mx-auto flex h-[68px] max-w-[1320px] items-center justify-between gap-4 px-4 sm:px-6">
+          <Logo dark />
 
           {/* Desktop Nav */}
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
+          <nav
+            className="hidden items-center gap-1 lg:flex"
+            aria-label="Primary"
+          >
             {navItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
                   cn(
-                    "flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                    "flex items-center gap-2 rounded-[10px] px-3 py-2 text-sm font-medium transition-colors duration-200",
                     isActive
-                      ? "bg-primary/10 text-primary"
-                      : "text-secondary-text hover:bg-card hover:text-foreground",
+                      ? "bg-[rgba(29,185,84,0.08)] text-[#1DB954]"
+                      : "text-[#A7A7A7] hover:bg-white/[0.05] hover:text-[#F5F5F5]",
                   )
                 }
               >
-                <item.icon className="h-4 w-4" />
+                <item.icon
+                  className="h-4 w-4"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
                 {item.label}
               </NavLink>
             ))}
           </nav>
 
           <div className="flex items-center gap-2">
+            {/* Search field — opens the search overlay */}
             <button
               onClick={openSearch}
-              className="flex h-10 items-center gap-2 rounded-full border border-border bg-white/40 px-4 text-sm text-secondary-text transition-all hover:border-primary/40 hover:text-primary hover:shadow-[0_0_18px_rgba(29,69,51,0.12)]"
+              className="flex h-11 w-[160px] items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 text-sm text-[#A7A7A7] transition-colors duration-200 hover:border-[#1DB954]/40 hover:text-[#F5F5F5] sm:w-[175px]"
               aria-label="Search"
             >
-              <Search className="h-4 w-4" />
-              <span className="hidden sm:inline">Search…</span>
+              <Search className="h-4 w-4 shrink-0" strokeWidth={1.75} />
+              <span className="truncate">Search…</span>
             </button>
             {isMobile && (
               <button
                 onClick={openMobileNav}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-secondary-text transition-colors hover:text-primary"
+                className="flex h-11 w-11 items-center justify-center rounded-[10px] text-[#A7A7A7] transition-colors duration-200 hover:bg-white/[0.05] hover:text-[#F5F5F5]"
                 aria-label="Open menu"
               >
-                <Menu className="h-5 w-5" />
+                <Menu className="h-5 w-5" strokeWidth={1.75} />
               </button>
             )}
           </div>
@@ -94,16 +102,16 @@ export function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed left-0 top-0 z-[91] flex h-full w-72 flex-col bg-card/95 p-4 shadow-2xl backdrop-blur-xl lg:hidden"
+              className="fixed left-0 top-0 z-[91] flex h-full w-72 flex-col border-r border-white/[0.08] bg-[#0A0C0B] p-4 shadow-2xl lg:hidden"
             >
               <div className="mb-6 flex items-center justify-between">
-                <Logo />
+                <Logo dark />
                 <button
                   onClick={closeMobileNav}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-secondary-text hover:text-primary"
+                  className="flex h-9 w-9 items-center justify-center rounded-[10px] text-[#A7A7A7] hover:bg-white/[0.05] hover:text-[#F5F5F5]"
                   aria-label="Close menu"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-5 w-5" strokeWidth={1.75} />
                 </button>
               </div>
               <nav className="flex flex-col gap-1" aria-label="Mobile">
@@ -111,21 +119,22 @@ export function Navbar() {
                   <button
                     key={item.path}
                     onClick={() => handleNavClick(item.path)}
-                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-secondary-text transition-colors hover:bg-border/40 hover:text-foreground"
+                    className="flex items-center gap-3 rounded-[10px] px-3 py-3 text-sm font-medium text-[#A7A7A7] transition-colors duration-200 hover:bg-white/[0.05] hover:text-[#F5F5F5]"
                   >
-                    <item.icon className="h-5 w-5" />
+                    <item.icon className="h-5 w-5" strokeWidth={1.75} />
                     {item.label}
                   </button>
                 ))}
               </nav>
-              <div className="mt-auto border-t border-border pt-4">
+              <div className="mt-auto border-t border-white/[0.08] pt-4">
                 <button
                   onClick={() => {
                     closeMobileNav();
                     openSearch();
                   }}
-                  className="flex items-center gap-2 text-sm text-primary hover:underline"
+                  className="flex items-center gap-2 text-sm text-[#1DB954] hover:text-[#3BE080]"
                 >
+                  <Search className="h-4 w-4" strokeWidth={1.75} />
                   Search songs…
                 </button>
               </div>

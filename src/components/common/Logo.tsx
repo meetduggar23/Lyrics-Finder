@@ -7,6 +7,8 @@ interface LogoProps {
   className?: string;
   showText?: boolean;
   size?: "sm" | "md" | "lg";
+  /** Dark navbar variant: light brand text + bright green icon. */
+  dark?: boolean;
 }
 
 const sizeClasses = {
@@ -15,7 +17,7 @@ const sizeClasses = {
   lg: "h-12 w-12",
 };
 
-export function Logo({ className, showText = true, size = "md" }: LogoProps) {
+export function Logo({ className, showText = true, size = "md", dark = false }: LogoProps) {
   return (
     <Link
       to="/"
@@ -23,17 +25,23 @@ export function Logo({ className, showText = true, size = "md" }: LogoProps) {
       aria-label={`${APP_NAME} home`}
     >
       <motion.div
-        whileHover={{ scale: 1.05, rotate: -3 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.04 }}
+        whileTap={{ scale: 0.96 }}
         className={cn(
-          "flex items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/30 transition-shadow group-hover:shadow-primary/50",
+          "flex items-center justify-center rounded-xl transition-shadow",
           sizeClasses[size],
+          dark
+            ? "bg-[#1DB954]"
+            : "bg-primary shadow-lg shadow-primary/30 group-hover:shadow-primary/50",
         )}
       >
         <svg
           viewBox="0 0 24 24"
           fill="none"
-          className="h-[60%] w-[60%] text-[#F7EAE0]"
+          className={cn(
+            "h-[60%] w-[60%]",
+            dark ? "text-[#0A0C0B]" : "text-[#F7EAE0]",
+          )}
           aria-hidden="true"
         >
           <path
@@ -49,10 +57,20 @@ export function Logo({ className, showText = true, size = "md" }: LogoProps) {
       </motion.div>
       {showText && (
         <div className="flex flex-col leading-none">
-          <span className="text-lg font-extrabold tracking-tight text-foreground">
+          <span
+            className={cn(
+              "text-lg font-extrabold tracking-tight",
+              dark ? "text-[#F5F5F5]" : "text-foreground",
+            )}
+          >
             Lyrics Finder
           </span>
-          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
+          <span
+            className={cn(
+              "text-[10px] font-semibold uppercase tracking-[0.2em]",
+              dark ? "text-[#1DB954]" : "text-primary",
+            )}
+          >
             AI
           </span>
         </div>
