@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Mic, TriangleAlert } from "lucide-react";
@@ -17,19 +17,11 @@ const staggerItem = (delay: number) => ({
 
 export function Hero() {
   const navigate = useNavigate();
+  const [detectedTrack, setDetectedTrack] = useState<Song | null>(null);
 
-  const onDetected = useCallback(
-    (detected: DetectedSong, track: Song | null) => {
-      if (track) {
-        navigate(`/song/${track.id}`);
-      } else {
-        navigate(
-          `/search?q=${encodeURIComponent(`${detected.title} ${detected.artist}`)}`,
-        );
-      }
-    },
-    [navigate],
-  );
+  const onDetected = useCallback((_detected: DetectedSong, track: Song | null) => {
+    setDetectedTrack(track);
+  }, []);
 
   const {
     phase,
@@ -40,6 +32,21 @@ export function Hero() {
     startListening,
     cancelListening,
   } = useSongRecognition(onDetected);
+
+  const handleStartListening = () => {
+    setDetectedTrack(null);
+    startListening();
+  };
+
+  const handleLyrics = () => {
+    if (detectedTrack) {
+      navigate(`/song/${detectedTrack.id}`);
+    } else if (detectedSong) {
+      navigate(
+        `/search?q=${encodeURIComponent(`${detectedSong.title} ${detectedSong.artist}`)}`,
+      );
+    }
+  };
 
   const handleManualSearch = () => {
     const target = document.getElementById("manual-search");
@@ -84,7 +91,7 @@ export function Hero() {
               phase={phase}
               seconds={seconds}
               progress={progress}
-              onStart={startListening}
+              onStart={handleStartListening}
               onCancel={cancelListening}
             />
             </motion.div>
@@ -95,16 +102,16 @@ export function Hero() {
               className="order-3 mt-2 flex w-full flex-wrap items-center justify-center gap-3 lg:justify-start"
             >
               <button
-                onClick={listening ? cancelListening : startListening}
+                onClick={listening ? cancelListening : handleStartListening}
                 disabled={analyzing}
                 className="inline-flex h-12 items-center gap-2 rounded-full bg-primary px-7 text-sm font-bold text-black shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/40 active:scale-95 disabled:pointer-events-none disabled:opacity-60"
               >
                 {listening ? (
-                  <>🛑 Stop Listening</>
+                  <>🛑 Cancel Listening</>
                 ) : analyzing ? (
                   <>⏳ Identifying…</>
                 ) : (
-                  <>🎤 Start Listening</>
+                  <>🎤 Tap to Listen</>
                 )}
               </button>
               <button
@@ -157,7 +164,7 @@ export function Hero() {
                   </p>
                   <div className="mt-4 flex justify-center gap-3 lg:justify-start">
                     <button
-                      onClick={startListening}
+                      onClick={handleStartListening}
                       className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-black hover:bg-primary-hover"
                     >
                       <Mic className="h-4 w-4" />
@@ -201,14 +208,7 @@ export function Hero() {
               listening={listening}
               analyzing={analyzing}
               detected={detectedSong}
-              onLyrics={() =>
-                detectedSong &&
-                navigate(
-                  `/search?q=${encodeURIComponent(
-                    `${detectedSong.title} ${detectedSong.artist}`,
-                  )}`,
-                )
-              }
+              onLyrics={handleLyrics}
             />
           </motion.div>
         </div>

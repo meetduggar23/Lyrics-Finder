@@ -3,30 +3,38 @@ import { API } from "@/constants";
 
 /**
  * Configured Axios instances for each external API.
- * Requests are routed through a CORS proxy that forwards the complete target
- * URL (including its query params) inside the proxy's `url` parameter.
+ *
+ * Requests always travel through a single-layer proxy that forwards the
+ * complete target URL (including its query params) inside a `url` parameter:
+ * - In development, requests hit Vite's built-in `/api-proxy` middleware
+ *   (see vite.config.ts), so no third-party proxy is needed.
+ * - In production builds, requests go through an external CORS proxy, which
+ *   can be swapped via VITE_API_PROXY (defaults to corsproxy.io).
  */
 
 const proxyBase =
   import.meta.env.VITE_API_PROXY?.replace(/\/+$/, "") ||
   "https://corsproxy.io";
 
-const PROXY_URL = `${proxyBase}/?url=`;
+const PROXY_URL = import.meta.env.DEV
+  ? "/api-proxy?url="
+  : `${proxyBase}/?url=`;
 
 interface ProxiedClientOptions {
   baseURL: string;
   timeout: number;
+  params?: Record<string, string | number | undefined>;
 }
 
 /**
  * Create an axios client that wraps requests through the CORS proxy.
- * Query params are merged into the upstream URL before it is encoded into the
- * proxy's `url` parameter, so they are never dropped as sibling params of the
- * proxy request itself.
+ * The upstream URL is assembled from the *real* API base first, then the whole
+ * thing (query params included) is encoded into the proxy's `url` parameter.
  */
-function createProxiedClient({ baseURL, timeout }: ProxiedClientOptions) {
+function createProxiedClient({ baseURL, timeout, params }: ProxiedClientOptions) {
   const client = axios.create({
     timeout,
+    params,
     headers: { Accept: "application/json" },
   });
 
@@ -34,10 +42,10 @@ function createProxiedClient({ baseURL, timeout }: ProxiedClientOptions) {
     const base = baseURL.replace(/\/+$/, "");
     const path = (config.url || "").replace(/^\/+/, "");
     const target = new URL(path, `${base}/`);
-    const params = config.params as Record<string, unknown> | undefined;
+    const mergedParams = config.params as Record<string, unknown> | undefined;
     config.params = undefined;
-    if (params) {
-      for (const [key, value] of Object.entries(params)) {
+    if (mergedParams) {
+      for (const [key, value] of Object.entries(mergedParams)) {
         if (value !== undefined && value !== null && value !== "") {
           target.searchParams.set(key, String(value));
         }
@@ -70,18 +78,17 @@ export const itunesClient = createProxiedClient({
   timeout: 15000,
 });
 
-export const lastfmClient = axios.create({
+export const lastfmClient = createProxiedClient({
   baseURL: API.lastfm,
   timeout: 15000,
-  headers: { Accept: "application/json" },
   params: {
     api_key: import.meta.env.VITE_LASTFM_API_KEY || "",
     format: "json",
   },
 });
 
-export const auddClient = axios.create({
-  baseURL: `${PROXY_URL}${encodeURIComponent("https://api.audd.io")}`,
+export const auddClient = createProxiedClient({
+  baseURL: API.audd,
   timeout: 30000,
 });
 

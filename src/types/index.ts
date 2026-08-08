@@ -16,6 +16,7 @@ export interface Song {
   link?: string;
   releaseYear?: number;
   source?: "deezer" | "itunes" | "lastfm" | "local";
+  language?: "hindi" | "english";
 }
 
 export interface Artist {

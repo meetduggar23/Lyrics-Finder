@@ -1,12 +1,13 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
+import { searchAll as itunesSearchAll } from "@/services/music/itunesService";
 import { searchAll as deezerSearchAll } from "@/services/deezer";
-import { searchAll as itunesSearchAll } from "@/services/itunes";
 import type { SearchResults, Song, Artist, Album } from "@/types";
 
 /**
  * Live search hook with debouncing and combined API results.
- * Fetches from Deezer with iTunes fallback.
+ * Fetches from the iTunes Search API (India storefront first) with Deezer
+ * fallback.
  */
 export function useLiveSearch() {
   const [query, setQuery] = useState("");
@@ -33,12 +34,12 @@ export function useLiveSearch() {
 
     const timeout = setTimeout(async () => {
       try {
-        const results = await deezerSearchAll(debouncedQuery);
+        const results = await itunesSearchAll(debouncedQuery);
         setSuggestions(results.songs.slice(0, 6));
       } catch {
-        // Fallback to iTunes on failure
+        // Fallback to Deezer on failure
         try {
-          const fallback = await itunesSearchAll(debouncedQuery);
+          const fallback = await deezerSearchAll(debouncedQuery);
           setSuggestions(fallback.songs.slice(0, 6));
         } catch {
           setSuggestions([]);
@@ -92,12 +93,12 @@ export function useSearchResults(query: string) {
 
     const execute = async () => {
       try {
-        const data = await deezerSearchAll(query);
+        const data = await itunesSearchAll(query);
         if (!cancelled) setResults(data);
       } catch {
         if (!cancelled) {
           try {
-            const fallback = await itunesSearchAll(query);
+            const fallback = await deezerSearchAll(query);
             if (!cancelled) {
               setResults({
                 ...fallback,

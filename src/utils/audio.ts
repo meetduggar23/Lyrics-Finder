@@ -5,6 +5,7 @@
  */
 
 let currentAudio: HTMLAudioElement | null = null;
+let currentProgress: { current: number; duration: number } | null = null;
 const listeners = new Set<() => void>();
 
 function notify(): void {
@@ -23,31 +24,55 @@ export function getPreviewingUrl(): string | null {
   return currentAudio.src;
 }
 
+export function getPreviewProgress(): { current: number; duration: number } | null {
+  return currentProgress;
+}
+
+function clearPreview(): void {
+  currentAudio = null;
+  currentProgress = null;
+}
+
 export function playPreview(url: string): void {
   if (!url) return;
   stopPreview();
   const audio = new Audio(url);
   audio.volume = 0.7;
-  audio.addEventListener("ended", () => {
-    if (currentAudio === audio) currentAudio = null;
+  audio.addEventListener("loadedmetadata", () => {
+    if (currentAudio !== audio) return;
+    currentProgress = { current: 0, duration: audio.duration || 0 };
     notify();
+  });
+  audio.addEventListener("timeupdate", () => {
+    if (currentAudio !== audio) return;
+    currentProgress = { current: audio.currentTime, duration: audio.duration || 0 };
+    notify();
+  });
+  audio.addEventListener("ended", () => {
+    if (currentAudio === audio) {
+      clearPreview();
+      notify();
+    }
   });
   audio.addEventListener("pause", () => {
-    if (currentAudio === audio) currentAudio = null;
-    notify();
+    if (currentAudio === audio) {
+      clearPreview();
+      notify();
+    }
   });
   void audio.play().catch(() => {
-    currentAudio = null;
+    clearPreview();
     notify();
   });
   currentAudio = audio;
+  currentProgress = { current: 0, duration: 0 };
   notify();
 }
 
 export function stopPreview(): void {
   if (currentAudio) {
     currentAudio.pause();
-    currentAudio = null;
+    clearPreview();
     notify();
   }
 }

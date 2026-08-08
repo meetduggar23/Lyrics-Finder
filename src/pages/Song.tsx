@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Play, Pause, Heart, Clock, Music2, Share2 } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { getSong } from "@/services/deezer";
+import { getSongDetails } from "@/services/music/itunesService";
 import { getLyrics } from "@/services/lyrics";
 import type { Song as SongType, Lyrics } from "@/types";
 import { PLACEHOLDER_IMAGE } from "@/constants";
@@ -41,7 +42,9 @@ export function SongPage() {
         setLoading(false);
         return;
       }
-      const data = await getSong(id);
+      const data = /^\d+$/.test(id)
+        ? await getSong(id)
+        : await getSongDetails(id);
       if (cancelled) return;
       if (!data) {
         setError("Song not found.");

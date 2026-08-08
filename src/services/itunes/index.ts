@@ -1,139 +1,185 @@
 import { itunesClient } from "@/api/client";
-import type { Song, Album, Artist, Track } from "@/types";
+import type { Song, Track } from "@/types";
+import {
+  searchSongs,
+  searchArtists,
+  searchAlbums,
+  searchAll,
+  getSongDetails,
+} from "@/services/music/itunesService";
 
-/**
- * iTunes Search API service.
- * Provides fallback music metadata and 30-second previews.
- */
+export {
+  searchSongs,
+  searchArtists,
+  searchAlbums,
+  searchAll,
+  getSongDetails,
+};
 
 interface ITunesResult {
   wrapperType: string;
   kind?: string;
   trackId: number;
-  artistId: number;
-  collectionId: number;
   trackName: string;
   artistName: string;
-  collectionName: string;
-  artworkUrl30?: string;
-  artworkUrl60?: string;
-  artworkUrl100?: string;
   trackTimeMillis?: number;
   previewUrl?: string;
-  releaseDate?: string;
-  primaryGenreName?: string;
-  country?: string;
-  trackCount?: number;
   trackNumber?: number;
-  collectionViewUrl?: string;
-  trackViewUrl?: string;
 }
 
-function mapSong(r: ITunesResult): Song {
-  return {
-    id: `it-${r.trackId}`,
-    title: r.trackName,
-    artist: r.artistName,
-    artistId: `it-artist-${r.artistId}`,
-    album: r.collectionName,
-    albumId: `it-album-${r.collectionId}`,
-    cover: r.artworkUrl100,
-    coverSmall: r.artworkUrl60,
-    coverMedium: r.artworkUrl100,
-    coverLarge: r.artworkUrl100?.replace("100x100", "300x300"),
-    duration: r.trackTimeMillis ? Math.round(r.trackTimeMillis / 1000) : undefined,
-    previewUrl: r.previewUrl,
-    link: r.trackViewUrl,
-    releaseYear: r.releaseDate
-      ? new Date(r.releaseDate).getFullYear()
-      : undefined,
-    source: "itunes",
-  };
+/** Normalize a string for loose matching (case + punctuation insensitive). */
+function normKey(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
-function mapAlbum(r: ITunesResult): Album {
-  return {
-    id: `it-album-${r.collectionId}`,
-    title: r.collectionName,
-    artist: r.artistName,
-    artistId: `it-artist-${r.artistId}`,
-    cover: r.artworkUrl100,
-    coverSmall: r.artworkUrl60,
-    coverMedium: r.artworkUrl100,
-    coverLarge: r.artworkUrl100?.replace("100x100", "300x300"),
-    releaseDate: r.releaseDate,
-    genre: r.primaryGenreName,
-    trackCount: r.trackCount,
-    source: "itunes",
-  };
+/** Normalize an artist name for matching, stripping bracketed disambiguation. */
+function normArtist(s: string): string {
+  return normKey(s).replace(/\(.*\)/g, "").trim();
 }
 
-function mapArtist(r: ITunesResult): Artist {
-  return {
-    id: `it-artist-${r.artistId}`,
-    name: r.artistName,
-    image: r.artworkUrl100,
-    imageSmall: r.artworkUrl60,
-    imageMedium: r.artworkUrl100,
-    imageLarge: r.artworkUrl100?.replace("100x100", "300x300"),
-    genres: r.primaryGenreName ? [r.primaryGenreName] : [],
-    country: r.country,
-    source: "itunes",
-  };
+/** Hindi / Indian pool search terms (searched against the IN storefront). */
+const HINDI_QUERIES = [
+  "bollywood",
+  "hindi hits",
+  "indian pop",
+  "hindi songs",
+  "bollywood hits",
+] as const;
+
+/** Extra Indian queries tried only when the primary pool comes up short. */
+const HINDI_EXTRA_QUERIES = [
+  "arijit singh",
+  "neha kakkar",
+  "shreya ghoshal",
+  "atif aslam",
+  "punjabi hits",
+] as const;
+
+/** English / International pool search terms (searched against US/GB). */
+const ENGLISH_QUERIES = [
+  "pop",
+  "top hits",
+  "english hits",
+  "rock",
+  "r&b",
+] as const;
+
+/** Extra English queries tried only when the primary pool comes up short. */
+const ENGLISH_EXTRA_QUERIES = [
+  "ed sheeran",
+  "the weeknd",
+  "dua lipa",
+  "alternative",
+  "dance pop",
+] as const;
+
+/** Hindi searches always use the India storefront. */
+const HINDI_COUNTRY = "IN";
+
+/** English searches prefer the US storefront, falling back to GB. */
+const ENGLISH_COUNTRIES = ["US", "GB"] as const;
+
+/** Target pool size per language for the hero music cards. */
+const POOL_SIZE = 15;
+
+/** Total target size of the combined featured pool. */
+const FEATURED_TARGET = 30;
+
+/** Minimum combined songs before the pool is considered usable. */
+const MIN_USABLE_SONGS = 10;
+
+/**
+ * Remove duplicates from a song list.
+ * Primary key is the track id (trackId); normalized title+artist is a
+ * secondary key that also catches cross-provider duplicates.
+ */
+export function deduplicateSongs(songs: Song[]): Song[] {
+  const seen = new Set<string>();
+  const out: Song[] = [];
+  for (const s of songs) {
+    const idKey = s.id ? `id:${s.id}` : "";
+    const nameKey = `name:${normKey(s.title)}|${normArtist(s.artist)}`;
+    if (idKey && seen.has(idKey)) continue;
+    if (seen.has(nameKey)) continue;
+    if (idKey) seen.add(idKey);
+    seen.add(nameKey);
+    out.push(s);
+  }
+  return out;
 }
 
-/** Search songs via iTunes */
-export async function searchSongs(
-  query: string,
-  limit = 20,
+/** Only songs we can actually play and show (preview + artwork). */
+function isUsable(song: Song): boolean {
+  return Boolean(song.previewUrl) && Boolean(song.coverMedium || song.cover);
+}
+
+async function searchPool(
+  queries: readonly string[],
+  countries: readonly string[],
+  limit: number,
 ): Promise<Song[]> {
-  const { data } = await itunesClient.get("/search", {
-    params: { term: query, entity: "song", limit },
-  });
-  const results: ITunesResult[] = data?.results ?? [];
-  return results.filter((r) => r.kind === "song").map(mapSong);
+  const results = await Promise.allSettled(
+    queries.map((q) => searchSongs(q, limit, countries)),
+  );
+  return results.flatMap((r) => (r.status === "fulfilled" ? r.value : []));
 }
 
-/** Search albums via iTunes */
-export async function searchAlbums(
-  query: string,
-  limit = 10,
-): Promise<Album[]> {
-  const { data } = await itunesClient.get("/search", {
-    params: { term: query, entity: "album", limit },
-  });
-  const results: ITunesResult[] = data?.results ?? [];
-  return results.filter((r) => r.wrapperType === "collection").map(mapAlbum);
+/** Build one language pool from its queries, topping up with extras if short. */
+async function buildPool(
+  queries: readonly string[],
+  extraQueries: readonly string[],
+  countries: readonly string[],
+  language: "hindi" | "english",
+): Promise<Song[]> {
+  let songs = deduplicateSongs(
+    (await searchPool(queries, countries, 25)).map((s) => ({ ...s, language })),
+  ).filter(isUsable);
+
+  if (songs.length < POOL_SIZE) {
+    const extras = deduplicateSongs(
+      (await searchPool(extraQueries, countries, 25)).map((s) => ({
+        ...s,
+        language,
+      })),
+    ).filter(isUsable);
+    songs = deduplicateSongs([...songs, ...extras]).filter(isUsable);
+  }
+
+  return songs.slice(0, POOL_SIZE);
 }
 
-/** Search artists via iTunes */
-export async function searchArtists(
-  query: string,
-  limit = 10,
-): Promise<Artist[]> {
-  const { data } = await itunesClient.get("/search", {
-    params: { term: query, entity: "musicArtist", limit },
-  });
-  const results: ITunesResult[] = data?.results ?? [];
-  return results.filter((r) => r.wrapperType === "artist").map(mapArtist);
-}
-
-/** Combine searches into unified results */
-export async function searchAll(query: string): Promise<{
-  songs: Song[];
-  artists: Artist[];
-  albums: Album[];
-}> {
-  const [songs, artists, albums] = await Promise.allSettled([
-    searchSongs(query),
-    searchArtists(query),
-    searchAlbums(query),
+/**
+ * Fetch two separate pools — Hindi/Indian (IN storefront) and
+ * English/International (US/GB storefront) — then merge them in a balanced
+ * ~50/50 mix for the hero cards.
+ */
+async function fetchFeaturedSongs(): Promise<Song[]> {
+  const [hindiSongs, englishSongs] = await Promise.all([
+    buildPool(HINDI_QUERIES, HINDI_EXTRA_QUERIES, [HINDI_COUNTRY], "hindi"),
+    buildPool(ENGLISH_QUERIES, ENGLISH_EXTRA_QUERIES, ENGLISH_COUNTRIES, "english"),
   ]);
-  return {
-    songs: songs.status === "fulfilled" ? songs.value : [],
-    artists: artists.status === "fulfilled" ? artists.value : [],
-    albums: albums.status === "fulfilled" ? albums.value : [],
-  };
+
+  const mixed: Song[] = [];
+  const size = Math.max(hindiSongs.length, englishSongs.length);
+  for (let i = 0; i < size; i++) {
+    if (i < hindiSongs.length) mixed.push(hindiSongs[i]);
+    if (i < englishSongs.length) mixed.push(englishSongs[i]);
+  }
+  return mixed.slice(0, FEATURED_TARGET);
+}
+
+/**
+ * Fetch the mixed-language featured pool (50% Hindi / 50% English).
+ * Powers the hero music cards with a varied, real playlist.
+ */
+export async function getFeaturedSongs(): Promise<Song[]> {
+  try {
+    const songs = await fetchFeaturedSongs();
+    if (songs.length >= MIN_USABLE_SONGS) return songs;
+  } catch {
+    // Fall through to the simple search fallback below.
+  }
+  return searchSongs("top hits", FEATURED_TARGET);
 }
 
 /** Get album tracks */
