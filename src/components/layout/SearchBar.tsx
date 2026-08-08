@@ -62,8 +62,8 @@ export function SearchBar() {
         aria-modal="true"
         aria-label="Search"
       >
-        <form onSubmit={handleSubmit} className="flex items-center gap-3 border-b border-border p-4">
-          <Search className="h-5 w-5 shrink-0 text-primary" />
+        <form onSubmit={handleSubmit} className="group flex items-center gap-3 border-b border-border p-4">
+          <Search className="h-4 w-4 shrink-0 text-muted/80 transition-colors group-focus-within:text-primary" />
           <input
             ref={inputRef}
             autoFocus

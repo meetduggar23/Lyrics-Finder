@@ -31,12 +31,12 @@ export function Home() {
             className="mx-auto flex max-w-[760px] items-center gap-3"
           >
             <div className="group relative flex-1">
-              <Search className="absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-muted transition-colors group-focus-within:text-primary" />
+              <Search className="pointer-events-none absolute left-5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted/80 transition-colors group-focus-within:text-primary" />
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by song title or artist…"
-                className="h-14 w-full rounded-2xl border border-white/10 bg-black/40 pl-12 pr-5 text-sm text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all placeholder:text-muted hover:border-white/15 focus:border-primary/60 focus:shadow-[0_0_0_4px_rgba(29,185,84,0.1),inset_0_1px_0_rgba(255,255,255,0.05)] focus:outline-none focus:placeholder:text-foreground/60"
+                className="h-14 w-full rounded-2xl border border-white/10 bg-black/40 pl-12 pr-5 text-sm text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md transition-all placeholder:text-muted hover:border-white/15 focus:border-primary/60 focus:shadow-[0_0_0_4px_rgba(29,185,84,0.1),inset_0_1px_0_rgba(255,255,255,0.05)] focus:outline-none focus:placeholder:text-foreground/60"
               />
             </div>
             <button

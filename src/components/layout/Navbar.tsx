@@ -126,7 +126,6 @@ export function Navbar() {
                   }}
                   className="flex items-center gap-2 text-sm text-primary hover:underline"
                 >
-                  <Search className="h-4 w-4" />
                   Search songs…
                 </button>
               </div>
