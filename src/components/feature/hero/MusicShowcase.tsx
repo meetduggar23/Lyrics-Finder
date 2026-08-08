@@ -219,10 +219,10 @@ function songHref(song: Song): string {
 /** Desktop layout: a compact 5-card playing-card fan. */
 const SLOTS = [
   { key: "center", x: 0, y: 0, rotate: 0, scale: 1, z: 20, dealDelay: 0.05 },
-  { key: "top-right", x: 145, y: -70, rotate: 10, scale: 0.9, z: 10, dealDelay: 0.16 },
-  { key: "top-left", x: -145, y: -70, rotate: -10, scale: 0.9, z: 10, dealDelay: 0.27 },
-  { key: "bottom-left", x: -130, y: 90, rotate: -8, scale: 0.85, z: 8, dealDelay: 0.38 },
-  { key: "bottom-right", x: 130, y: 90, rotate: 8, scale: 0.85, z: 8, dealDelay: 0.49 },
+  { key: "top-right", x: 130, y: -60, rotate: 10, scale: 0.9, z: 10, dealDelay: 0.16 },
+  { key: "top-left", x: -130, y: -60, rotate: -10, scale: 0.9, z: 10, dealDelay: 0.27 },
+  { key: "bottom-left", x: -115, y: 80, rotate: -8, scale: 0.85, z: 8, dealDelay: 0.38 },
+  { key: "bottom-right", x: 115, y: 80, rotate: 8, scale: 0.85, z: 8, dealDelay: 0.49 },
 ];
 
 /** Tablet layout: a tighter 3-card fan. */
@@ -462,7 +462,7 @@ function PlayingCard({
   return (
     <motion.div
       ref={ref}
-      className="absolute left-1/2 top-[20%] will-change-transform"
+      className="absolute left-1/2 top-[14%] will-change-transform"
       style={{ zIndex: hovered ? 90 : slot.z, perspective: 900, cursor: "pointer" }}
       initial={{ x: 0, y: 0, rotate: 0, scale: 0.35, z: 60, opacity: 0.6 }}
       animate={{
@@ -511,7 +511,7 @@ function PlayingCard({
           <div
             className={cn(
               "rounded-2xl",
-              isCenter ? "w-[280px] lg:w-[300px]" : "w-[200px] lg:w-[220px]",
+              isCenter ? "w-[240px] lg:w-[260px]" : "w-[170px] lg:w-[190px]",
             )}
           >
             <CardFace
@@ -565,7 +565,7 @@ function MobileCard({ song, onSelect, onLyrics, onToggleFavorite, isFavorite }: 
   };
 
   return (
-    <div className="w-56 shrink-0 snap-center" onClick={onSelect}>
+    <div className="w-52 shrink-0 snap-center" onClick={onSelect}>
       <div className="rounded-2xl border border-border bg-white p-3 shadow-xl shadow-[#5E3122]/15">
         <div className="flex items-center gap-3">
           <img
@@ -849,7 +849,7 @@ export function MusicShowcase({
     <section className="relative flex flex-col items-center">
       {/* Desktop / tablet deck */}
       <div
-        className="relative hidden h-[540px] w-full md:block lg:h-[580px]"
+        className="relative hidden h-[440px] w-full md:block lg:h-[480px]"
         style={{ perspective: 1400 }}
         onMouseEnter={() => setAreaHovered(true)}
         onMouseLeave={() => setAreaHovered(false)}
@@ -895,7 +895,7 @@ export function MusicShowcase({
 
       {/* Mobile carousel */}
       <div
-        className="-mx-4 flex w-[calc(100%+2rem)] snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 pt-6 md:hidden"
+        className="-mx-4 flex w-[calc(100%+2rem)] snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 pt-4 md:hidden"
         onTouchStart={() => setAreaHovered(true)}
         onTouchEnd={() => setAreaHovered(false)}
         onTouchCancel={() => setAreaHovered(false)}

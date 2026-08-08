@@ -1,7 +1,9 @@
+import { useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Mic, Square } from "lucide-react";
+import { Search } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { RecognitionPhase } from "@/hooks/useSongRecognition";
+import type { DetectedSong } from "@/types";
 
 export type HeroPhase = RecognitionPhase;
 
@@ -11,35 +13,88 @@ interface ListeningModuleProps {
   progress: number;
   onStart: () => void;
   onCancel: () => void;
+  detected?: DetectedSong | null;
+  onLyrics?: () => void;
 }
 
-const WAVE_BARS = 21;
-const PULSE_HEIGHTS = [8, 16, 24, 12, 20, 28, 9, 18];
+const WAVE_BARS = 34;
+const BAR_GREEN = "#7FD9A6";
 
-function Waveform({ active }: { active: boolean }) {
+interface WaveBar {
+  base: number;
+  amp: number;
+  delay: number;
+  duration: number;
+}
+
+/**
+ * Bell-shaped envelope so the center bars are taller and the outer bars
+ * shorter. Heights, delays, and durations are randomized so bars never move
+ * in unison — the result looks like a live audio waveform, not an equalizer.
+ */
+function useWaveBars(): WaveBar[] {
+  return useMemo(
+    () =>
+      Array.from({ length: WAVE_BARS }, (_, i) => {
+        const center = Math.abs(Math.sin((i / (WAVE_BARS - 1)) * Math.PI));
+        const envelope = 0.35 + 0.65 * center;
+        return {
+          base: 5 + Math.random() * 5 * envelope,
+          amp: (14 + Math.random() * 16) * envelope,
+          delay: Math.random() * 1.3,
+          duration: 0.5 + Math.random() * 0.5,
+        };
+      }),
+    [],
+  );
+}
+
+/** Live animated waveform shown while AudD is analyzing. */
+function LiveWaveform({ slow = false }: { slow?: boolean }) {
+  const bars = useWaveBars();
   return (
-    <div className="flex h-8 items-end justify-center gap-[3px]" aria-hidden="true">
-      {Array.from({ length: WAVE_BARS }).map((_, i) => (
+    <div className="flex h-16 items-center justify-center gap-[2px]" aria-hidden="true">
+      {bars.map((b, i) => (
         <motion.span
           key={i}
-          className={cn(
-            "w-1 rounded-full",
-            active ? "bg-primary/70" : "bg-primary/30",
-          )}
-          animate={active ? { height: PULSE_HEIGHTS[i % 8] } : { height: 4 }}
-          transition={
-            active
-              ? {
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                  duration: 0.8 + (i % 5) * 0.12,
-                  ease: "easeInOut",
-                }
-              : { duration: 0.3 }
-          }
+          className="w-[2px] rounded-full"
+          style={{
+            backgroundColor: BAR_GREEN,
+            boxShadow: `0 0 6px ${BAR_GREEN}66`,
+          }}
+          animate={{ height: [b.base, b.base + b.amp, b.base] }}
+          transition={{
+            repeat: Infinity,
+            repeatType: "mirror",
+            duration: slow ? b.duration * 2.6 : b.duration,
+            delay: slow ? b.delay * 2.5 : b.delay,
+            ease: "easeInOut",
+          }}
         />
       ))}
     </div>
+  );
+}
+
+/** Lyrics Finder note mark, reused as the idle state of the detection control. */
+function NoteMark() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      className="h-11 w-11 text-[#F7EAE0] sm:h-12 sm:w-12"
+      aria-hidden="true"
+    >
+      <path
+        d="M9 18V5l12-2v13"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="6" cy="18" r="3" fill="currentColor" />
+      <circle cx="18" cy="16" r="3" fill="currentColor" />
+    </svg>
   );
 }
 
@@ -49,14 +104,17 @@ export function ListeningModule({
   progress,
   onStart,
   onCancel,
+  detected,
+  onLyrics,
 }: ListeningModuleProps) {
   const listening = phase === "listening";
   const analyzing = phase === "analyzing";
+  const active = listening || analyzing;
 
   return (
     <div className="flex flex-col items-center gap-4">
-      {/* Microphone with subtle radar rings */}
-      <div className="relative flex h-56 w-56 items-center justify-center sm:h-64 sm:w-64">
+      {/* Detection control: logo when idle, live waveform while analyzing */}
+      <div className="relative flex h-48 w-48 items-center justify-center sm:h-56 sm:w-56">
         {/* Soft breathing ring */}
         <motion.div
           className="absolute inset-4 rounded-full border border-primary/15 sm:inset-5"
@@ -89,56 +147,64 @@ export function ListeningModule({
           />
         ))}
 
-        {/* Green microphone button */}
+        {/* Main button */}
         <motion.button
           onClick={listening ? onCancel : onStart}
           disabled={analyzing}
           aria-label={listening ? "Stop listening" : "Start listening"}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.94 }}
-          animate={listening ? { scale: [1, 1.04, 1] } : { scale: 1 }}
-          transition={
-            listening
-              ? { repeat: Infinity, duration: 1.5, ease: "easeInOut" }
-              : { duration: 0.3 }
-          }
           className={cn(
-            "relative flex h-36 w-36 items-center justify-center rounded-full text-[#F7EAE0] transition-shadow duration-300 sm:h-40 sm:w-40",
-            listening
-              ? "bg-primary shadow-[0_0_50px_rgba(29,69,51,0.5)]"
+            "relative flex h-32 w-32 items-center justify-center overflow-hidden rounded-full transition-colors duration-300 sm:h-36 sm:w-36",
+            active
+              ? "bg-[#142F24] shadow-[0_0_45px_rgba(29,69,51,0.45)]"
               : "bg-primary shadow-[0_0_35px_rgba(29,69,51,0.3)] hover:shadow-[0_0_55px_rgba(29,69,51,0.45)]",
-            analyzing && "cursor-not-allowed opacity-60",
+            analyzing && "cursor-wait opacity-95",
           )}
         >
           <AnimatePresence mode="wait">
-            {listening ? (
+            {active ? (
               <motion.span
-                key="stop"
-                initial={{ scale: 0.5, opacity: 0 }}
+                key="wave"
+                initial={{ scale: 0.65, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.5, opacity: 0 }}
-                className="flex items-center justify-center"
+                exit={{ scale: 0.65, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="flex w-full items-center justify-center"
               >
-                <Square className="h-7 w-7 fill-current sm:h-8 sm:w-8" />
+                {detected ? (
+                  // Brief success pulse before settling into the reveal.
+                  <motion.div
+                    key="pulse"
+                    initial={false}
+                    animate={{ scale: [1, 1.08, 1] }}
+                    transition={{ duration: 0.9, ease: "easeInOut" }}
+                  >
+                    <LiveWaveform slow={analyzing} />
+                  </motion.div>
+                ) : (
+                  <LiveWaveform slow={analyzing} />
+                )}
               </motion.span>
             ) : (
               <motion.span
-                key="mic"
-                initial={{ scale: 0.5, opacity: 0 }}
+                key="logo"
+                initial={{ scale: 0.65, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.5, opacity: 0 }}
+                exit={{ scale: 0.65, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
                 className="flex items-center justify-center"
               >
-                <Mic className="h-11 w-11 sm:h-12 sm:w-12" />
+                <NoteMark />
               </motion.span>
             )}
           </AnimatePresence>
         </motion.button>
       </div>
 
-      {/* Status indicator */}
+      {/* Status */}
       <div className="flex flex-col items-center gap-2">
-        {phase !== "idle" && (
+        {phase !== "idle" && !(analyzing && detected) && (
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-4 py-1.5 backdrop-blur">
             {listening && (
               <>
@@ -148,11 +214,11 @@ export function ListeningModule({
                 </span>
               </>
             )}
-            {analyzing && (
+            {analyzing && !detected && (
               <>
                 <span className="text-sm leading-none">✨</span>
                 <span className="text-sm font-medium text-foreground">
-                  Song Detected
+                  Analyzing audio…
                 </span>
               </>
             )}
@@ -162,6 +228,26 @@ export function ListeningModule({
                 <span className="text-sm text-secondary-text">Something went wrong</span>
               </>
             )}
+          </div>
+        )}
+
+        {/* Success reveal: detected song + lyrics CTA */}
+        {analyzing && detected && (
+          <div className="flex flex-col items-center gap-2 text-center">
+            <p className="flex items-center gap-1.5 text-sm font-semibold text-primary">
+              <span>✓</span> Song Detected
+            </p>
+            <p className="max-w-[240px] truncate text-sm font-semibold text-foreground">
+              {detected.title}
+            </p>
+            <p className="text-xs text-secondary-text">{detected.artist}</p>
+            <button
+              onClick={onLyrics}
+              className="mt-1 inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-bold text-[#F7EAE0] transition-colors hover:bg-primary-hover"
+            >
+              <Search className="h-3.5 w-3.5" />
+              View Lyrics
+            </button>
           </div>
         )}
 
@@ -176,9 +262,6 @@ export function ListeningModule({
           </div>
         )}
       </div>
-
-      {/* Subtle equalizer (minimal stand-in for the removed dotted line) */}
-      <Waveform active={listening} />
     </div>
   );
 }

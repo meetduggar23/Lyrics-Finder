@@ -64,7 +64,7 @@ export function Hero() {
     <section className="relative overflow-hidden">
       <HeroBackground />
 
-      <div className="relative mx-auto max-w-7xl px-4 pb-14 pt-10 sm:px-6 sm:pt-12 lg:pb-16 lg:pt-14">
+      <div className="relative mx-auto max-w-7xl px-4 pb-10 pt-8 sm:px-6 sm:pt-10 lg:pb-12 lg:pt-12">
         <div className="grid items-start gap-10 lg:grid-cols-[45fr_55fr] lg:gap-10">
           {/* LEFT — primary interaction area */}
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
@@ -83,11 +83,13 @@ export function Hero() {
               </p>
             </motion.div>
 
-            <motion.div {...staggerItem(0.15)} className="mt-10 w-full sm:mt-12">
+            <motion.div {...staggerItem(0.15)} className="mt-8 w-full sm:mt-10">
               <ListeningModule
                 phase={phase}
                 seconds={seconds}
                 progress={progress}
+                detected={detectedSong}
+                onLyrics={handleLyrics}
                 onStart={handleStartListening}
                 onCancel={cancelListening}
               />
@@ -157,56 +159,33 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* Horizontal control bar: description | CTA | stats */}
+        {/* Caption + stats strip */}
         <motion.div
           {...staggerItem(0.25)}
-          className="mx-auto mt-12 flex max-w-[1200px] flex-col items-center gap-8 lg:mt-14 lg:flex-row lg:items-center lg:justify-between lg:gap-14"
+          className="mx-auto mt-10 flex max-w-[1000px] flex-col items-center gap-8 lg:mt-12 lg:flex-row lg:items-center lg:justify-center lg:gap-16"
         >
           {/* Description */}
-          <p className="max-w-[420px] text-center text-base leading-relaxed text-secondary-text lg:text-left">
+          <p className="max-w-[420px] text-center text-base leading-relaxed text-secondary-text">
             Tap the microphone and let AI identify the music around you.
           </p>
 
-          {/* CTA buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <button
-              onClick={listening ? cancelListening : handleStartListening}
-              disabled={analyzing}
-              className="inline-flex h-14 items-center gap-2 rounded-full bg-primary px-8 text-sm font-bold text-[#F7EAE0] shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/40 active:scale-95 disabled:pointer-events-none disabled:opacity-60"
-            >
-              {listening ? (
-                <>🛑 Cancel Listening</>
-              ) : analyzing ? (
-                <>⏳ Identifying…</>
-              ) : (
-                <>🎤 Tap to Listen</>
-              )}
-            </button>
-            <button
-              onClick={handleManualSearch}
-              className="inline-flex h-14 items-center rounded-full border border-border bg-white/50 px-8 text-sm font-semibold text-foreground transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary active:scale-95"
-            >
-              Search Manually
-            </button>
-          </div>
-
           {/* Stats */}
           <div className="flex items-center gap-6">
-            <div className="text-center lg:text-left">
+            <div className="text-center">
               <p className="text-xl font-extrabold text-foreground">500K+</p>
               <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-widest text-muted">
                 Songs
               </p>
             </div>
             <span className="h-9 w-px bg-[#5E3122]/15" />
-            <div className="text-center lg:text-left">
+            <div className="text-center">
               <p className="text-xl font-extrabold text-foreground">120+</p>
               <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-widest text-muted">
                 Countries
               </p>
             </div>
             <span className="h-9 w-px bg-[#5E3122]/15" />
-            <div className="text-center lg:text-left">
+            <div className="text-center">
               <p className="text-xl font-extrabold text-foreground">Millions</p>
               <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-widest text-muted">
                 Lyrics
