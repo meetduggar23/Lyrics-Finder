@@ -1,8 +1,15 @@
 <div align="center">
 
-<img src="public/favicon.svg" alt="Songly Logo — music note on a green rounded square" width="72" height="72" />
+<a href="https://github.com/meetduggar23/Lyrics-Finder">
+  <img
+    src="https://raw.githubusercontent.com/meetduggar23/Lyrics-Finder/main/public/favicon.svg"
+    alt="Songly Logo"
+    width="72"
+    height="72"
+  />
+</a>
 
-# Songly <span style="color:#7FD9A6">AI</span>
+# Songly <span style="color:#1D4533">AI</span>
 
 **Find any song. Instantly.**
 
