@@ -4,7 +4,7 @@ import {
   searchArtists as deezerSearchArtists,
   searchAlbums as deezerSearchAlbums,
 } from "@/services/deezer";
-import type { Song, Artist, Album, SearchResults } from "@/types";
+import type { Song, Artist, Album, SearchResults, SearchSuggestion } from "@/types";
 
 /**
  * Official Apple iTunes Search API service (no authentication required).
@@ -252,4 +252,118 @@ export async function getSongDetails(trackId: string): Promise<Song | null> {
     }
   }
   return null;
+}
+
+/**
+ * Autocomplete suggestions backed by the real search APIs (iTunes first,
+ * Deezer as fallback). Results are ranked so exact matches, then prefix
+ * matches, outrank loose partial matches.
+ */
+
+const MAX_SUGGESTIONS = 5;
+const SUGGESTION_CACHE_TTL_MS = 5 * 60 * 1000;
+const suggestionCache = new Map<string, { items: SearchSuggestion[]; fetchedAt: number }>();
+
+const normalize = (s: string) => s.trim().toLocaleLowerCase();
+
+function rankCandidate(
+  query: string,
+  title: string,
+  artist: string,
+): number {
+  const q = normalize(query);
+  if (!q) return 0;
+  const t = normalize(title);
+  const a = normalize(artist);
+
+  // 1. Exact song title
+  if (t === q) return 110;
+  // 2. Exact artist
+  if (a === q) return 100;
+  // 3. Title starts with query
+  if (t.startsWith(q)) return 80;
+  // 4. Artist starts with query
+  if (a.startsWith(q)) return 70;
+  // 5. Partial title match
+  if (t.includes(q)) return 50;
+  // 6. Partial artist match
+  if (a.includes(q)) return 40;
+
+  // Multi-word query (e.g. "arijit tum"): every token must appear.
+  const tokens = q.split(/\s+/).filter(Boolean);
+  if (tokens.length > 1) {
+    const haystack = `${t} ${a}`;
+    if (tokens.every((token) => haystack.includes(token))) return 30;
+    if (tokens.some((token) => t.startsWith(token) || a.startsWith(token))) return 20;
+  }
+  return 0;
+}
+
+/**
+ * Fetch ranked suggestions for the autocomplete dropdown.
+ * Queries shorter than 2 characters return no results, and repeated queries
+ * are served from an in-memory cache (5 minutes) without hitting the API.
+ */
+export async function searchSuggestions(query: string): Promise<SearchSuggestion[]> {
+  const q = normalize(query);
+  if (q.length < 2) return [];
+
+  const cached = suggestionCache.get(q);
+  if (cached && Date.now() - cached.fetchedAt < SUGGESTION_CACHE_TTL_MS) {
+    return cached.items;
+  }
+
+  const [songsRes, artistsRes, albumsRes] = await Promise.allSettled([
+    searchSongs(query, 8),
+    searchArtists(query, 4),
+    searchAlbums(query, 4),
+  ]);
+
+  const songs = songsRes.status === "fulfilled" ? songsRes.value : [];
+  const artists = artistsRes.status === "fulfilled" ? artistsRes.value : [];
+  const albums = albumsRes.status === "fulfilled" ? albumsRes.value : [];
+
+  const candidates: SearchSuggestion[] = [
+    ...songs.map((song) => ({
+      id: song.id,
+      kind: "song" as const,
+      title: song.title,
+      subtitle: `${song.artist}${song.album ? ` · ${song.album}` : ""}`,
+      cover: song.coverSmall || song.coverMedium || song.cover,
+      song,
+    })),
+    ...artists.map((artist) => ({
+      id: artist.id,
+      kind: "artist" as const,
+      title: artist.name,
+      subtitle: "Artist",
+      cover: artist.imageSmall || artist.imageMedium || artist.image,
+      artist,
+    })),
+    ...albums.map((album) => ({
+      id: album.id,
+      kind: "album" as const,
+      title: album.title,
+      subtitle: `${album.artist} · Album`,
+      cover: album.coverSmall || album.coverMedium || album.cover,
+      album,
+    })),
+  ];
+
+  const ranked = candidates
+    .map((c) => {
+      const artist =
+        c.kind === "song" ? c.song?.artist || "" :
+        c.kind === "artist" ? c.artist?.name || "" :
+        c.album?.artist || "";
+      const score = rankCandidate(q, c.title, artist);
+      return { c, score };
+    })
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, MAX_SUGGESTIONS)
+    .map((entry) => entry.c);
+
+  suggestionCache.set(q, { items: ranked, fetchedAt: Date.now() });
+  return ranked;
 }

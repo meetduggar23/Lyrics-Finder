@@ -78,6 +78,19 @@ export interface SearchSuggestions {
   suggestions: string[];
 }
 
+export type SuggestionKind = "song" | "artist" | "album";
+
+export interface SearchSuggestion {
+  id: string;
+  kind: SuggestionKind;
+  title: string;
+  subtitle: string;
+  cover?: string;
+  song?: Song;
+  artist?: Artist;
+  album?: Album;
+}
+
 export interface FavoriteItem {
   id: string;
   type: "song" | "artist" | "album";
