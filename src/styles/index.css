@@ -4,19 +4,20 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
   /* Brand colors */
-  --color-primary: #1db954;
-  --color-primary-hover: #1ed760;
-  --color-surface: #0a0a0a;
-  --color-background: #121212;
-  --color-card: #181818;
-  --color-border: #2a2a2a;
-  --color-foreground: #ffffff;
-  --color-secondary-text: #b3b3b3;
-  --color-muted: #727272;
-  --color-error: #e53935;
-  --color-warning: #ffc107;
-  --color-success: #1db954;
-  --color-accent-glow: rgba(29, 185, 84, 0.35);
+  --color-primary: #1d4533;
+  --color-primary-hover: #2a5c45;
+  --color-accent: #f9d2ba;
+  --color-surface: #f7eae0;
+  --color-background: #f7eae0;
+  --color-card: #ffffff;
+  --color-border: #e8d8c7;
+  --color-foreground: #1d4533;
+  --color-secondary-text: #5e3122;
+  --color-muted: #8a6b57;
+  --color-error: #c0452c;
+  --color-warning: #c9892a;
+  --color-success: #1d4533;
+  --color-accent-glow: rgba(29, 69, 51, 0.35);
 
   --radius-card: 1.25rem;
   --radius-xl-card: 1.5rem;
@@ -88,7 +89,7 @@
 
   ::selection {
     background-color: var(--color-primary);
-    color: #000;
+    color: #f7eae0;
   }
 
   /* Custom scrollbar */
@@ -100,7 +101,7 @@
     background: var(--color-surface);
   }
   ::-webkit-scrollbar-thumb {
-    background: #2a2a2a;
+    background: #5e3122;
     border-radius: 9999px;
     border: 2px solid var(--color-surface);
   }
@@ -111,13 +112,13 @@
 
 @layer utilities {
   .glass {
-    background: rgba(18, 18, 18, 0.6);
+    background: rgba(247, 234, 224, 0.65);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
   }
 
   .text-gradient-green {
-    background: linear-gradient(135deg, #1db954 0%, #1ed760 50%, #a7f3d0 100%);
+    background: linear-gradient(135deg, #1d4533 0%, #2a5c45 50%, #f9d2ba 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -126,7 +127,7 @@
   .bg-grid {
     background-image: radial-gradient(
       circle at 1px 1px,
-      rgba(255, 255, 255, 0.04) 1px,
+      rgba(94, 49, 34, 0.06) 1px,
       transparent 0
     );
     background-size: 40px 40px;

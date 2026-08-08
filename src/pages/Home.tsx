@@ -35,12 +35,12 @@ export function Home() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by song title or artist…"
-                className="h-14 w-full rounded-2xl border border-white/10 bg-black/40 pl-12 pr-5 text-sm text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md transition-all placeholder:text-muted hover:border-white/15 focus:border-primary/60 focus:shadow-[0_0_0_4px_rgba(29,185,84,0.1),inset_0_1px_0_rgba(255,255,255,0.05)] focus:outline-none focus:placeholder:text-foreground/60"
+                className="h-14 w-full rounded-2xl border border-border bg-white/70 pl-12 pr-5 text-sm text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] backdrop-blur-md transition-all placeholder:text-muted hover:border-border focus:border-primary/50 focus:shadow-[0_0_0_4px_rgba(29,69,51,0.12),inset_0_1px_0_rgba(255,255,255,0.7)] focus:outline-none focus:placeholder:text-foreground/60"
               />
             </div>
             <button
               type="submit"
-              className="inline-flex h-14 shrink-0 items-center rounded-2xl bg-primary px-8 font-semibold text-black shadow-lg shadow-primary/20 transition-all hover:bg-primary-hover hover:shadow-primary/30 active:scale-95"
+              className="inline-flex h-14 shrink-0 items-center rounded-2xl bg-primary px-8 font-semibold text-[#F7EAE0] shadow-lg shadow-primary/20 transition-all hover:bg-primary-hover hover:shadow-primary/30 active:scale-95"
             >
               Search
             </button>

@@ -64,14 +64,11 @@ export function Hero() {
     <section className="relative overflow-hidden">
       <HeroBackground />
 
-      <div className="relative mx-auto max-w-7xl px-4 pb-12 pt-6 sm:px-6 sm:pt-8 lg:pb-16 lg:pt-10">
-        <div className="grid items-start gap-12 lg:grid-cols-[45fr_55fr] lg:gap-10">
+      <div className="relative mx-auto max-w-7xl px-4 pb-14 pt-10 sm:px-6 sm:pt-12 lg:pb-16 lg:pt-14">
+        <div className="grid items-start gap-10 lg:grid-cols-[45fr_55fr] lg:gap-10">
           {/* LEFT — primary interaction area */}
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
-            <motion.div
-              {...staggerItem(0.05)}
-              className="order-2 w-full lg:order-1"
-            >
+            <motion.div {...staggerItem(0.05)} className="w-full">
               <span className="sr-only">AI Music Recognition</span>
               <h1 className="text-4xl font-black leading-[1.06] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
                 Find Any Song
@@ -80,73 +77,20 @@ export function Hero() {
                 <br />
                 In <span className="text-gradient-green">Seconds</span>.
               </h1>
-              <p className="mx-auto mt-5 max-w-md text-base text-secondary-text sm:text-lg lg:mx-0">
+              <p className="mx-auto mt-4 max-w-md text-base text-secondary-text sm:text-lg lg:mx-0">
                 Identify songs playing around you and instantly discover lyrics,
                 artist information, and album details.
               </p>
             </motion.div>
 
-            <motion.div {...staggerItem(0.15)} className="order-1 w-full lg:order-2">
-            <ListeningModule
-              phase={phase}
-              seconds={seconds}
-              progress={progress}
-              onStart={handleStartListening}
-              onCancel={cancelListening}
-            />
-            </motion.div>
-
-            {/* Action buttons */}
-            <motion.div
-              {...staggerItem(0.25)}
-              className="order-3 mt-2 flex w-full flex-wrap items-center justify-center gap-3 lg:justify-start"
-            >
-              <button
-                onClick={listening ? cancelListening : handleStartListening}
-                disabled={analyzing}
-                className="inline-flex h-12 items-center gap-2 rounded-full bg-primary px-7 text-sm font-bold text-black shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/40 active:scale-95 disabled:pointer-events-none disabled:opacity-60"
-              >
-                {listening ? (
-                  <>🛑 Cancel Listening</>
-                ) : analyzing ? (
-                  <>⏳ Identifying…</>
-                ) : (
-                  <>🎤 Tap to Listen</>
-                )}
-              </button>
-              <button
-                onClick={handleManualSearch}
-                className="inline-flex h-12 items-center rounded-full border border-border bg-card/60 px-7 text-sm font-semibold text-secondary-text transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary active:scale-95"
-              >
-                Search Manually
-              </button>
-            </motion.div>
-
-            {/* Stats */}
-            <motion.div
-              {...staggerItem(0.35)}
-              className="order-4 mt-8 flex w-full flex-wrap items-center justify-center gap-x-10 gap-y-4 lg:justify-start"
-            >
-              <div>
-                <p className="text-2xl font-extrabold text-foreground">500K+</p>
-                <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-widest text-muted">
-                  Songs
-                </p>
-              </div>
-              <span className="hidden h-8 w-px bg-white/10 sm:block" />
-              <div>
-                <p className="text-2xl font-extrabold text-foreground">120+</p>
-                <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-widest text-muted">
-                  Countries
-                </p>
-              </div>
-              <span className="hidden h-8 w-px bg-white/10 sm:block" />
-              <div>
-                <p className="text-2xl font-extrabold text-foreground">Millions</p>
-                <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-widest text-muted">
-                  Lyrics
-                </p>
-              </div>
+            <motion.div {...staggerItem(0.15)} className="mt-10 w-full sm:mt-12">
+              <ListeningModule
+                phase={phase}
+                seconds={seconds}
+                progress={progress}
+                onStart={handleStartListening}
+                onCancel={cancelListening}
+              />
             </motion.div>
 
             {/* Error */}
@@ -156,7 +100,7 @@ export function Hero() {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="order-5 mt-6 w-full max-w-md rounded-2xl border border-error/30 bg-error/5 p-5"
+                  className="mt-8 w-full max-w-md rounded-2xl border border-error/30 bg-error/5 p-5"
                 >
                   <p className="flex items-start gap-2 text-left text-sm text-secondary-text">
                     <TriangleAlert className="mt-0.5 h-5 w-5 shrink-0 text-error" />
@@ -165,7 +109,7 @@ export function Hero() {
                   <div className="mt-4 flex justify-center gap-3 lg:justify-start">
                     <button
                       onClick={handleStartListening}
-                      className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-black hover:bg-primary-hover"
+                      className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-[#F7EAE0] hover:bg-primary-hover"
                     >
                       <Mic className="h-4 w-4" />
                       Try Again
@@ -183,7 +127,7 @@ export function Hero() {
 
             {/* Demo mode note */}
             {!hasAuddKey && phase !== "analyzing" && phase !== "listening" && (
-              <p className="order-6 mt-6 max-w-md text-xs text-muted lg:text-left">
+              <p className="mt-6 max-w-md text-xs text-muted lg:text-left">
                 Demo mode: add your free{" "}
                 <code className="rounded bg-border/40 px-1.5 py-0.5 text-primary">
                   VITE_AUDD_API_KEY
@@ -212,6 +156,64 @@ export function Hero() {
             />
           </motion.div>
         </div>
+
+        {/* Horizontal control bar: description | CTA | stats */}
+        <motion.div
+          {...staggerItem(0.25)}
+          className="mx-auto mt-12 flex max-w-[1200px] flex-col items-center gap-8 lg:mt-14 lg:flex-row lg:items-center lg:justify-between lg:gap-14"
+        >
+          {/* Description */}
+          <p className="max-w-[420px] text-center text-base leading-relaxed text-secondary-text lg:text-left">
+            Tap the microphone and let AI identify the music around you.
+          </p>
+
+          {/* CTA buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={listening ? cancelListening : handleStartListening}
+              disabled={analyzing}
+              className="inline-flex h-14 items-center gap-2 rounded-full bg-primary px-8 text-sm font-bold text-[#F7EAE0] shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/40 active:scale-95 disabled:pointer-events-none disabled:opacity-60"
+            >
+              {listening ? (
+                <>🛑 Cancel Listening</>
+              ) : analyzing ? (
+                <>⏳ Identifying…</>
+              ) : (
+                <>🎤 Tap to Listen</>
+              )}
+            </button>
+            <button
+              onClick={handleManualSearch}
+              className="inline-flex h-14 items-center rounded-full border border-border bg-white/50 px-8 text-sm font-semibold text-foreground transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary active:scale-95"
+            >
+              Search Manually
+            </button>
+          </div>
+
+          {/* Stats */}
+          <div className="flex items-center gap-6">
+            <div className="text-center lg:text-left">
+              <p className="text-xl font-extrabold text-foreground">500K+</p>
+              <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-widest text-muted">
+                Songs
+              </p>
+            </div>
+            <span className="h-9 w-px bg-[#5E3122]/15" />
+            <div className="text-center lg:text-left">
+              <p className="text-xl font-extrabold text-foreground">120+</p>
+              <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-widest text-muted">
+                Countries
+              </p>
+            </div>
+            <span className="h-9 w-px bg-[#5E3122]/15" />
+            <div className="text-center lg:text-left">
+              <p className="text-xl font-extrabold text-foreground">Millions</p>
+              <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-widest text-muted">
+                Lyrics
+              </p>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

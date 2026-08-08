@@ -188,7 +188,7 @@ function Equalizer({ active, className }: { active: boolean; className?: string 
       {WAVE.map((h, i) => (
         <motion.span
           key={i}
-          className="w-[3px] rounded-full bg-[#1DB954]"
+          className="w-[3px] rounded-full bg-primary"
           style={{ height: active ? h : Math.max(3, h * 0.45) }}
           animate={active ? { height: [h * 0.5, h, h * 0.5] } : { height: Math.max(3, h * 0.45) }}
           transition={
@@ -242,7 +242,7 @@ interface DetectedOverlayProps {
 
 function DetectedOverlay({ title, artist, cover, phase, onLyrics }: DetectedOverlayProps) {
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-2xl bg-black/70 p-4 text-center backdrop-blur-[2px]">
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-2xl bg-[#1D4533]/90 p-4 text-center backdrop-blur-[2px]">
       <img
         src={cover || PLACEHOLDER_IMAGE}
         alt={title}
@@ -250,13 +250,13 @@ function DetectedOverlay({ title, artist, cover, phase, onLyrics }: DetectedOver
         loading="lazy"
       />
       <div className="space-y-1">
-        <p className="text-sm font-semibold text-white">Detected: {title}</p>
-        <p className="text-xs text-white/70">{artist}</p>
-        <p className="text-xs text-[#1DB954]">{phase}</p>
+        <p className="text-sm font-semibold text-[#F7EAE0]">Detected: {title}</p>
+        <p className="text-xs text-[#F7EAE0]/70">{artist}</p>
+        <p className="text-xs text-[#F9D2BA]">{phase}</p>
       </div>
       <button
         onClick={onLyrics}
-        className="flex items-center gap-1.5 rounded-full bg-[#1DB954] px-4 py-2 text-xs font-bold text-black transition-colors hover:bg-[#1ED760]"
+        className="flex items-center gap-1.5 rounded-full bg-[#F9D2BA] px-4 py-2 text-xs font-bold text-[#1D4533] transition-colors hover:bg-[#FBDEC8]"
       >
         <Search className="h-3.5 w-3.5" />
         View Lyrics
@@ -318,10 +318,10 @@ function CardFace({
   return (
     <div
       className={cn(
-        "flex h-full w-full select-none flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#111111] text-left",
+        "flex h-full w-full select-none flex-col overflow-hidden rounded-2xl border border-border bg-white text-left",
         isCenter
-          ? "border-white/20 shadow-[0_0_60px_rgba(29,185,84,0.15),0_10px_40px_rgba(0,0,0,0.7)]"
-          : "shadow-2xl shadow-black/60",
+          ? "border-border shadow-[0_0_60px_rgba(29,69,51,0.15),0_10px_40px_rgba(94,49,34,0.25)]"
+          : "shadow-xl shadow-[#5E3122]/20",
       )}
     >
       {/* Full square album artwork */}
@@ -335,11 +335,11 @@ function CardFace({
             if (coverIdx < covers.length - 1) setCoverIdx((i) => i + 1);
           }}
         />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#1D4533]/70 via-transparent to-transparent" />
 
         {/* NOW PLAYING label (center card, when playing) */}
         {isCenter && isPlaying && (
-          <span className="pointer-events-none absolute bottom-12 left-3 text-[10px] font-bold uppercase tracking-widest text-white drop-shadow-lg">
+          <span className="pointer-events-none absolute bottom-12 left-3 text-[10px] font-bold uppercase tracking-widest text-[#F7EAE0] drop-shadow-lg">
             NOW PLAYING
           </span>
         )}
@@ -348,7 +348,7 @@ function CardFace({
         {isCenter && (
           <button
             onClick={onPlay}
-            className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954] text-black shadow-lg transition-transform hover:scale-110"
+            className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-[#F7EAE0] shadow-lg transition-transform hover:scale-110"
             aria-label={isPlaying ? "Pause preview" : "Play preview"}
           >
             {isPlaying ? (
@@ -364,15 +364,15 @@ function CardFace({
       <div className="flex min-h-0 flex-1 flex-col gap-1 p-3">
         <p
           className={cn(
-            "line-clamp-2 font-bold leading-snug text-white",
+            "line-clamp-2 font-bold leading-snug text-[#1D4533]",
             isCenter ? "text-[15px]" : "text-sm",
           )}
         >
           {song.title}
         </p>
-        <p className="line-clamp-1 text-xs text-[#A7A7A7]">{song.artist}</p>
+        <p className="line-clamp-1 text-xs text-[#5E3122]">{song.artist}</p>
         {isCenter && (
-          <p className="line-clamp-1 text-[11px] text-[#A7A7A7]/70">{song.album}</p>
+          <p className="line-clamp-1 text-[11px] text-[#5E3122]/70">{song.album}</p>
         )}
         <Equalizer active={isPlaying} className="mt-auto pt-1" />
       </div>
@@ -382,7 +382,7 @@ function CardFace({
         {isCenter && (
           <button
             onClick={onLyrics}
-            className="flex h-9 flex-1 items-center justify-center gap-2 rounded-full bg-[#1DB954] text-xs font-bold text-black transition-colors hover:bg-[#1ED760]"
+            className="flex h-9 flex-1 items-center justify-center gap-2 rounded-full bg-primary text-xs font-bold text-[#F7EAE0] transition-colors hover:bg-primary-hover"
           >
             <Search className="h-3.5 w-3.5" />
             View Lyrics
@@ -392,8 +392,8 @@ function CardFace({
           aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
           onClick={onToggleFavorite}
           className={cn(
-            "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/5 transition-colors hover:bg-white/10",
-            isFavorite && "text-[#1DB954]",
+            "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F7EAE0] transition-colors hover:bg-[#F1DFCC]",
+            isFavorite && "text-primary",
           )}
         >
           <Heart className={cn("h-4 w-4", isFavorite && "fill-current")} />
@@ -566,7 +566,7 @@ function MobileCard({ song, onSelect, onLyrics, onToggleFavorite, isFavorite }: 
 
   return (
     <div className="w-56 shrink-0 snap-center" onClick={onSelect}>
-      <div className="rounded-2xl border border-white/10 bg-[#111111] p-3 shadow-xl shadow-black/50">
+      <div className="rounded-2xl border border-border bg-white p-3 shadow-xl shadow-[#5E3122]/15">
         <div className="flex items-center gap-3">
           <img
             src={covers[coverIdx] || PLACEHOLDER_IMAGE}
@@ -578,9 +578,9 @@ function MobileCard({ song, onSelect, onLyrics, onToggleFavorite, isFavorite }: 
             }}
           />
           <div className="min-w-0 flex-1">
-            <p className="line-clamp-1 text-sm font-bold text-white">{song.title}</p>
-            <p className="line-clamp-1 text-xs text-[#A7A7A7]">{song.artist}</p>
-            <p className="line-clamp-1 text-[11px] text-[#A7A7A7]/70">{song.album}</p>
+            <p className="line-clamp-1 text-sm font-bold text-[#1D4533]">{song.title}</p>
+            <p className="line-clamp-1 text-xs text-[#5E3122]">{song.artist}</p>
+            <p className="line-clamp-1 text-[11px] text-[#5E3122]/70">{song.album}</p>
           </div>
         </div>
         <div className="mt-3 flex items-center justify-between">
@@ -591,8 +591,8 @@ function MobileCard({ song, onSelect, onLyrics, onToggleFavorite, isFavorite }: 
               onToggleFavorite();
             }}
             className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-full bg-white/5 transition-colors hover:bg-white/10",
-              isFavorite && "text-[#1DB954]",
+              "flex h-9 w-9 items-center justify-center rounded-full bg-[#F7EAE0] transition-colors hover:bg-[#F1DFCC]",
+              isFavorite && "text-primary",
             )}
           >
             <Heart className={cn("h-4 w-4", isFavorite && "fill-current")} />
@@ -602,7 +602,7 @@ function MobileCard({ song, onSelect, onLyrics, onToggleFavorite, isFavorite }: 
               e.stopPropagation();
               handlePlay();
             }}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1DB954] text-black transition-colors hover:bg-[#1ED760]"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-[#F7EAE0] transition-colors hover:bg-primary-hover"
           >
             {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current" />}
           </button>
@@ -612,7 +612,7 @@ function MobileCard({ song, onSelect, onLyrics, onToggleFavorite, isFavorite }: 
               e.stopPropagation();
               onLyrics();
             }}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 transition-colors hover:bg-white/10"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F7EAE0] transition-colors hover:bg-[#F1DFCC]"
           >
             <Music2 className="h-4 w-4" />
           </button>

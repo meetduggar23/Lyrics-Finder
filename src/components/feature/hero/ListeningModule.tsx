@@ -11,32 +11,28 @@ interface ListeningModuleProps {
   progress: number;
   onStart: () => void;
   onCancel: () => void;
-  centered?: boolean;
 }
 
-const WAVE_BARS = 32;
-const PULSE_HEIGHTS = [8, 20, 48, 14, 34, 58, 10, 26];
+const WAVE_BARS = 21;
+const PULSE_HEIGHTS = [8, 16, 24, 12, 20, 28, 9, 18];
 
-function Waveform({ active, centered }: { active: boolean; centered?: boolean }) {
+function Waveform({ active }: { active: boolean }) {
   return (
-    <div
-      className={cn(
-        "flex h-14 items-end justify-center gap-1",
-        !centered && "lg:justify-start",
-      )}
-      aria-hidden="true"
-    >
+    <div className="flex h-8 items-end justify-center gap-[3px]" aria-hidden="true">
       {Array.from({ length: WAVE_BARS }).map((_, i) => (
         <motion.span
           key={i}
-          className="w-1.5 rounded-full bg-primary/80"
-          animate={active ? { height: PULSE_HEIGHTS[i % 8] } : { height: 5 }}
+          className={cn(
+            "w-1 rounded-full",
+            active ? "bg-primary/70" : "bg-primary/30",
+          )}
+          animate={active ? { height: PULSE_HEIGHTS[i % 8] } : { height: 4 }}
           transition={
             active
               ? {
                   repeat: Infinity,
                   repeatType: "reverse",
-                  duration: 0.7 + (i % 5) * 0.12,
+                  duration: 0.8 + (i % 5) * 0.12,
                   ease: "easeInOut",
                 }
               : { duration: 0.3 }
@@ -53,117 +49,64 @@ export function ListeningModule({
   progress,
   onStart,
   onCancel,
-  centered = false,
 }: ListeningModuleProps) {
   const listening = phase === "listening";
   const analyzing = phase === "analyzing";
 
   return (
-    <div
-      className={cn(
-        "flex flex-col gap-5",
-        centered ? "items-center" : "items-center lg:items-start",
-      )}
-    >
-      {/* Microphone button with rings and circular waveform */}
-      <div className="relative flex h-52 w-52 items-center justify-center sm:h-60 sm:w-60">
+    <div className="flex flex-col items-center gap-4">
+      {/* Microphone with subtle radar rings */}
+      <div className="relative flex h-56 w-56 items-center justify-center sm:h-64 sm:w-64">
         {/* Soft breathing ring */}
         <motion.div
-          className="absolute inset-4 rounded-full border border-primary/25"
-          animate={{ scale: [1, 1.07], opacity: [0.4, 0.85] }}
+          className="absolute inset-4 rounded-full border border-primary/15 sm:inset-5"
+          animate={{ scale: [1, 1.08], opacity: [0.35, 0.8] }}
           transition={{
             repeat: Infinity,
             repeatType: "reverse",
-            duration: 2.2,
+            duration: 3.5,
             ease: "easeInOut",
           }}
           aria-hidden="true"
         />
 
-        {/* Sound ripples (only while listening) */}
-        {[0, 1, 2].map((ring) => (
+        {/* Radar ripples (only while listening) */}
+        {[0, 1].map((ring) => (
           <motion.span
             key={ring}
-            className="absolute inset-0 rounded-full border border-primary/40"
+            className="absolute inset-0 rounded-full border border-primary/20"
             animate={
               listening
-                ? { scale: [1, 1.45], opacity: [0.55, 0] }
+                ? { scale: [1, 1.18], opacity: [0.5, 0] }
                 : { scale: 1, opacity: 0 }
             }
             transition={
               listening
-                ? { repeat: Infinity, duration: 2.1, delay: ring * 0.65, ease: "easeOut" }
+                ? { repeat: Infinity, duration: 2.4, delay: ring * 0.8, ease: "easeOut" }
                 : { duration: 0.3 }
             }
             aria-hidden="true"
           />
         ))}
 
-        {/* Animated waveform around the button */}
-        <motion.svg
-          viewBox="0 0 220 220"
-          fill="none"
-          className="absolute -inset-4"
-          animate={{ rotate: 360 }}
-          transition={{
-            repeat: Infinity,
-            duration: listening ? 9 : 20,
-            ease: "linear",
-          }}
-          aria-hidden="true"
-        >
-          <circle
-            cx="110"
-            cy="110"
-            r="102"
-            stroke={listening ? "rgba(29,185,84,0.55)" : "rgba(29,185,84,0.3)"}
-            strokeWidth="1.4"
-            strokeDasharray="3 9"
-          />
-          <circle
-            cx="110"
-            cy="110"
-            r="90"
-            stroke="rgba(255,255,255,0.1)"
-            strokeWidth="1"
-            strokeDasharray="16 12"
-          />
-        </motion.svg>
-        <motion.svg
-          viewBox="0 0 220 220"
-          fill="none"
-          className="absolute -inset-10"
-          animate={{ rotate: -360 }}
-          transition={{ repeat: Infinity, duration: 34, ease: "linear" }}
-          aria-hidden="true"
-        >
-          <circle
-            cx="110"
-            cy="110"
-            r="108"
-            stroke="rgba(29,185,84,0.18)"
-            strokeWidth="1"
-            strokeDasharray="1 7"
-          />
-        </motion.svg>
-
+        {/* Green microphone button */}
         <motion.button
           onClick={listening ? onCancel : onStart}
           disabled={analyzing}
           aria-label={listening ? "Stop listening" : "Start listening"}
-          whileHover={{ scale: 1.06 }}
+          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.94 }}
-          animate={listening ? { scale: [1, 1.05, 1] } : { scale: 1 }}
+          animate={listening ? { scale: [1, 1.04, 1] } : { scale: 1 }}
           transition={
             listening
-              ? { repeat: Infinity, duration: 1.4, ease: "easeInOut" }
+              ? { repeat: Infinity, duration: 1.5, ease: "easeInOut" }
               : { duration: 0.3 }
           }
           className={cn(
-            "relative flex h-28 w-28 items-center justify-center rounded-full text-black transition-shadow duration-300 sm:h-32 sm:w-32",
+            "relative flex h-36 w-36 items-center justify-center rounded-full text-[#F7EAE0] transition-shadow duration-300 sm:h-40 sm:w-40",
             listening
-              ? "bg-primary shadow-[0_0_70px_rgba(29,185,84,0.55)]"
-              : "bg-primary shadow-[0_0_30px_rgba(29,185,84,0.25)] hover:shadow-[0_0_55px_rgba(29,185,84,0.45)]",
+              ? "bg-primary shadow-[0_0_50px_rgba(29,69,51,0.5)]"
+              : "bg-primary shadow-[0_0_35px_rgba(29,69,51,0.3)] hover:shadow-[0_0_55px_rgba(29,69,51,0.45)]",
             analyzing && "cursor-not-allowed opacity-60",
           )}
         >
@@ -176,7 +119,7 @@ export function ListeningModule({
                 exit={{ scale: 0.5, opacity: 0 }}
                 className="flex items-center justify-center"
               >
-                <Square className="h-8 w-8 fill-current" />
+                <Square className="h-7 w-7 fill-current sm:h-8 sm:w-8" />
               </motion.span>
             ) : (
               <motion.span
@@ -186,7 +129,7 @@ export function ListeningModule({
                 exit={{ scale: 0.5, opacity: 0 }}
                 className="flex items-center justify-center"
               >
-                <Mic className="h-10 w-10" />
+                <Mic className="h-11 w-11 sm:h-12 sm:w-12" />
               </motion.span>
             )}
           </AnimatePresence>
@@ -194,14 +137,9 @@ export function ListeningModule({
       </div>
 
       {/* Status indicator */}
-      <div
-        className={cn(
-          "flex flex-col items-center gap-2",
-          !centered && "lg:items-start",
-        )}
-      >
+      <div className="flex flex-col items-center gap-2">
         {phase !== "idle" && (
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-card/70 px-4 py-1.5 backdrop-blur">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-4 py-1.5 backdrop-blur">
             {listening && (
               <>
                 <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
@@ -239,16 +177,8 @@ export function ListeningModule({
         )}
       </div>
 
-      <Waveform active={listening} centered={centered} />
-
-      <p
-        className={cn(
-          "max-w-xs text-center text-sm text-secondary-text",
-          !centered && "lg:text-left",
-        )}
-      >
-        Tap the microphone and let AI identify the music around you.
-      </p>
+      {/* Subtle equalizer (minimal stand-in for the removed dotted line) */}
+      <Waveform active={listening} />
     </div>
   );
 }

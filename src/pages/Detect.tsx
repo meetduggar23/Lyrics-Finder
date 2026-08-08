@@ -109,7 +109,6 @@ export function DetectPage() {
             className="mt-10"
           >
             <ListeningModule
-              centered
               phase={phase}
               seconds={seconds}
               progress={progress}
@@ -131,7 +130,7 @@ export function DetectPage() {
                 <div className="mt-4 flex justify-center gap-3">
                   <button
                     onClick={startListening}
-                    className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-black hover:bg-primary-hover"
+                    className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-[#F7EAE0] hover:bg-primary-hover"
                   >
                     <Mic className="h-4 w-4" />
                     Try Again
@@ -171,7 +170,7 @@ export function DetectPage() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 12 }}
                 transition={{ type: "spring", stiffness: 220, damping: 24 }}
-                className="mt-10 w-full max-w-sm overflow-hidden rounded-3xl border border-primary/20 bg-card/80 p-5 text-left shadow-[0_0_60px_rgba(29,185,84,0.15)] backdrop-blur-xl"
+                className="mt-10 w-full max-w-sm overflow-hidden rounded-3xl border border-primary/20 bg-card/80 p-5 text-left shadow-[0_0_60px_rgba(29,69,51,0.12)] backdrop-blur-xl"
               >
                 <p className="mb-4 text-center text-xs font-bold uppercase tracking-widest text-primary">
                   ✨ Song Detected
@@ -204,7 +203,7 @@ export function DetectPage() {
                 <div className="mt-5 flex items-center gap-2">
                   <button
                     onClick={handleViewLyrics}
-                    className="flex h-10 flex-1 items-center justify-center gap-2 rounded-full bg-primary text-sm font-bold text-black transition-colors hover:bg-primary-hover"
+                    className="flex h-10 flex-1 items-center justify-center gap-2 rounded-full bg-primary text-sm font-bold text-[#F7EAE0] transition-colors hover:bg-primary-hover"
                   >
                     View Lyrics
                     <ArrowRight className="h-4 w-4" />
@@ -216,7 +215,7 @@ export function DetectPage() {
                       "flex h-10 w-10 items-center justify-center rounded-full border transition-colors",
                       isResultFavorite
                         ? "border-primary/40 bg-primary/10 text-primary"
-                        : "border-white/15 text-white/70 hover:border-primary/40 hover:text-primary",
+                        : "border-border text-[#5E3122] hover:border-primary/40 hover:text-primary",
                     )}
                   >
                     <Heart className={cn("h-4 w-4", isResultFavorite && "fill-current")} />
@@ -224,7 +223,7 @@ export function DetectPage() {
                   <button
                     onClick={handleListenAgain}
                     aria-label="Listen again"
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/70 transition-colors hover:border-primary/40 hover:text-primary"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-[#5E3122] transition-colors hover:border-primary/40 hover:text-primary"
                   >
                     <RotateCcw className="h-4 w-4" />
                   </button>

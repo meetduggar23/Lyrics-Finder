@@ -33,7 +33,7 @@ export function Logo({ className, showText = true, size = "md" }: LogoProps) {
         <svg
           viewBox="0 0 24 24"
           fill="none"
-          className="h-[60%] w-[60%] text-black"
+          className="h-[60%] w-[60%] text-[#F7EAE0]"
           aria-hidden="true"
         >
           <path

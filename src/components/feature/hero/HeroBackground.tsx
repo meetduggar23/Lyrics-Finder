@@ -35,11 +35,11 @@ export function HeroBackground() {
       className="pointer-events-none absolute inset-0 overflow-hidden"
       aria-hidden="true"
     >
-      {/* Dark charcoal base */}
-      <div className="absolute inset-0 bg-[#080808]" />
+      {/* Warm cream base */}
+      <div className="absolute inset-0 bg-[#F7EAE0]" />
 
       {/* Very soft green radial glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_35%,rgba(29,185,84,0.09),transparent_70%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_35%,rgba(29,69,51,0.07),transparent_70%)]" />
 
       {/* Blurred gradient blobs */}
       <motion.div
@@ -53,7 +53,7 @@ export function HeroBackground() {
         transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-white/5 blur-[120px]"
+        className="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-[#F9D2BA]/50 blur-[120px]"
         animate={{ x: [0, 30, 0], y: [0, -30, 0] }}
         transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -70,7 +70,7 @@ export function HeroBackground() {
           key={p.id}
           className={cn(
             "absolute rounded-full",
-            p.green ? "bg-primary/40" : "bg-white/25",
+            p.green ? "bg-primary/30" : "bg-[#5E3122]/20",
           )}
           style={{
             left: p.left,

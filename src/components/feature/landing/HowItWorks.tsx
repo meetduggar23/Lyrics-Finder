@@ -59,7 +59,7 @@ export function HowItWorks() {
             >
               <div className="relative mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
                 <step.icon className="h-6 w-6 text-primary" />
-                <span className="absolute -right-2 -top-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-black">
+                <span className="absolute -right-2 -top-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-[#F7EAE0]">
                   {step.number}
                 </span>
               </div>
